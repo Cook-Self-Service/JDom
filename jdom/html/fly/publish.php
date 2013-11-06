@@ -44,7 +44,7 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 		$this->arg('viewType'	, null, $args);
 
 		$states = array(
-			'' => array('icomoon-question-sign', 'JDOM_UNDEFINED', 'both', 'default'),
+			'' => array('icomoon-question-sign', 'PLG_JDOM_UNDEFINED', 'both', 'default'),
 			1 => array('icomoon-publish', 'JPUBLISHED', 'both', 'success'),
 			0 => array('icomoon-unpublish', 'JUNPUBLISHED', 'both', 'danger'),
 			2 => array('icomoon-archive', 'JARCHIVED', 'both', 'info'),

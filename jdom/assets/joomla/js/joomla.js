@@ -38,12 +38,12 @@ listItemTask = function(id, task)
 	switch(taskExec)
 	{
 		case 'delete':
-			if (!window.confirm((JDOM_ALERT_ASK_BEFORE_REMOVE)))
+			if (!window.confirm((PLG_JDOM_ALERT_ASK_BEFORE_REMOVE)))
 				return
 			break;
 			
 		case 'trash':
-			if (!window.confirm(JDOM_ALERT_ASK_BEFORE_TRASH))
+			if (!window.confirm(PLG_JDOM_ALERT_ASK_BEFORE_TRASH))
 				return
 			break;
 	}

@@ -93,11 +93,11 @@ class JDomHtmlGridTaskTask extends JDomHtmlGridTask
 		switch ($this->getTaskExec())
 		{
 			case 'delete':
-				$js = 'const JDOM_ALERT_ASK_BEFORE_REMOVE = "' . JText::_(JDOM_ALERT_ASK_BEFORE_REMOVE) .'";';
+				$js = 'const PLG_JDOM_ALERT_ASK_BEFORE_REMOVE = "' . JText::_('PLG_JDOM_ALERT_ASK_BEFORE_REMOVE') .'";';
 				break;				
 
 			case 'trash':
-				$js = 'const JDOM_ALERT_ASK_BEFORE_TRASH = "' . JText::_(JDOM_ALERT_ASK_BEFORE_TRASH) .'";';
+				$js = 'const PLG_JDOM_ALERT_ASK_BEFORE_TRASH = "' . JText::_('PLG_JDOM_ALERT_ASK_BEFORE_TRASH') .'";';
 				break;				
 
 		}

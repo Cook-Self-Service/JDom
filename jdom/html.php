@@ -287,11 +287,11 @@ class JDomHtml extends JDom
 			switch($task)
 			{
 				case 'delete':
-					$this->alertConfirm = JText::_('JDOM_ALERT_ASK_BEFORE_REMOVE');
+					$this->alertConfirm = JText::_('PLG_JDOM_ALERT_ASK_BEFORE_REMOVE');
 					break;
 	
 				case 'trash':
-					$this->alertConfirm = JText::_('JDOM_ALERT_ASK_BEFORE_TRASH');
+					$this->alertConfirm = JText::_('PLG_JDOM_ALERT_ASK_BEFORE_TRASH');
 					break;
 			}
 			

@@ -80,20 +80,20 @@ class JDomHtmlFormInputFile extends JDomHtmlFormInput
 		
 		$list = array();
 
-		$list[] = array('value' => '', 'text' => $this->JText("JDOM_FILE_REMOVE_KEEP"), 'icon' => 'icomoon-cancel');
+		$list[] = array('value' => '', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_KEEP"), 'icon' => 'icomoon-cancel');
 
 		
 		if (in_array('remove', $this->actions))
-			$list[] = array('value' => 'remove', 'text' => $this->JText("JDOM_FILE_REMOVE_EJECT"), 'icon' => 'icomoon-out');
+			$list[] = array('value' => 'remove', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_EJECT"), 'icon' => 'icomoon-out');
 
 		if (in_array('thumbs', $this->actions))
-			$list[] = array('value' => 'thumbs', 'text' => $this->JText("JDOM_FILE_REMOVE_THUMBS_ONLY"), 'icon' => 'icomoon-pictures');
+			$list[] = array('value' => 'thumbs', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_THUMBS_ONLY"), 'icon' => 'icomoon-pictures');
 
 		if (in_array('trash', $this->actions))
-			$list[] = array('value' => 'trash', 'text' => $this->JText("JDOM_FILE_REMOVE_TRASH"), 'icon' => 'icomoon-trash');
+			$list[] = array('value' => 'trash', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_TRASH"), 'icon' => 'icomoon-trash');
 
 		if (in_array('delete', $this->actions))
-			$list[] = array('value' => 'delete', 'text' => $this->JText("JDOM_FILE_REMOVE_DELETE"), 'icon' => 'icomoon-remove');
+			$list[] = array('value' => 'delete', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_DELETE"), 'icon' => 'icomoon-remove');
 
 		return $list;
 	}

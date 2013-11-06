@@ -20,12 +20,11 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 
-class JDomHtmlFlyBool extends JDomHtmlFly
+class JDomHtmlGridOrderingSortable extends JDomHtmlGridOrdering
 {
-	protected $text;
-	protected $icon;
-
-
+	protected $canChange;	
+	protected $showInput;
+	
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -33,70 +32,62 @@ class JDomHtmlFlyBool extends JDomHtmlFly
 	 * 	@dataKey	: database field name
 	 * 	@dataObject	: complete object row (stdClass or Array)
 	 * 	@dataValue	: value  default = dataObject->dataKey
-	 *
+	 * 	@num		: Num position in list
+	 *	@task		: Task to execute.
 	 *
 	 */
 	function __construct($args)
 	{
-
 		parent::__construct($args);
-
-		$this->arg('viewType'	, null, $args);
 		
-		$states = array(
-			'' => array('icomoon-question-sign', 'JDOM_UNDEFINED', 'both', 'default'),
-			1 => array('icomoon-ok', 'JYES', 'both', 'success'),
-			0 => array('icomoon-cancel', 'JNO', 'both', 'danger'));
-			
-		if ($this->dataValue === null)
-			$this->dataValue = '';
-		
-		$state = $states[$this->dataValue];
-		$this->icon = $state[0];
-		$this->text = $this->JText($state[1]);
-		if (empty($this->viewType))
-			$this->viewType = $state[2];
-		
-		$this->color = $state[3];
-		
+		$this->arg('showInput'	, null, $args, false);
 	}
+
 
 	function build()
 	{
+		
 		$html = '';
-		
-		//Icon alone
-		if ($this->viewType == 'icon')
+	
+		$disableClassName = '';
+		$disabledLabel	  = '';
+
+		$handlerClass = 'inactive';
+		if ($this->canChange)
 		{
-			$html .= JDom::_('html.icon', array(
-				'icon' => $this->icon,
-				'tooltip' => true,
-				'title' => $this->text,
-				'color' => $this->color
-			));
-			
-			return $html;
+			$handlerClass = 'sortable-handler hasTooltip';
 		}
 		
-		
-		//Icon
-		if ($this->viewType == 'both')
+		if (!$this->enabled)
 		{
-			$html .= JDom::_('html.icon', array(
-				'icon' => $this->icon,
-			));
-						
+			$disabledLabel    = JText::_('PLG_JDOM_ORDERING_DISABLED');
+			$disableClassName = 'inactive tip-top';	
 		}
-
-		$html .= $this->text;
-
-		//Embed in label
-		$html = JDom::_('html.label', array(
-			'content' => $html,
-			'color' => $this->color		
+		
+		$htmlIcon = JDom::_('html.icon', array(
+			'icon' => 'icomoon-menu'
 		));
-
+		
+		
+		$html .= JDom::_('html.fly', array(
+			'markup' => 'span',
+			'domClass' => $handlerClass . ' ' . $disableClassName,
+			'selectors' => array(
+				'title' => $disabledLabel
+				
+			),
+			
+			'dataValue' => $htmlIcon
+		
+		));
+		
+		if ($this->enabled)
+		{			
+			//TEXT INPUT
+			$html .= $this->buildInput($this->showInput);
+		}
+		
 		return $html;
 	}
-
+	
 }

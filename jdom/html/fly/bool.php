@@ -20,11 +20,12 @@
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 
-class JDomHtmlGridOrderingSortable extends JDomHtmlGridOrdering
+class JDomHtmlFlyBool extends JDomHtmlFly
 {
-	protected $canChange;	
-	protected $showInput;
-	
+	protected $text;
+	protected $icon;
+
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -32,62 +33,70 @@ class JDomHtmlGridOrderingSortable extends JDomHtmlGridOrdering
 	 * 	@dataKey	: database field name
 	 * 	@dataObject	: complete object row (stdClass or Array)
 	 * 	@dataValue	: value  default = dataObject->dataKey
-	 * 	@num		: Num position in list
-	 *	@task		: Task to execute.
+	 *
 	 *
 	 */
 	function __construct($args)
 	{
-		parent::__construct($args);
-		
-		$this->arg('showInput'	, null, $args, false);
-	}
 
+		parent::__construct($args);
+
+		$this->arg('viewType'	, null, $args);
+		
+		$states = array(
+			'' => array('icomoon-question-sign', 'PLG_JDOM_UNDEFINED', 'both', 'default'),
+			1 => array('icomoon-ok', 'JYES', 'both', 'success'),
+			0 => array('icomoon-cancel', 'JNO', 'both', 'danger'));
+			
+		if ($this->dataValue === null)
+			$this->dataValue = '';
+		
+		$state = $states[$this->dataValue];
+		$this->icon = $state[0];
+		$this->text = $this->JText($state[1]);
+		if (empty($this->viewType))
+			$this->viewType = $state[2];
+		
+		$this->color = $state[3];
+		
+	}
 
 	function build()
 	{
-		
 		$html = '';
-	
-		$disableClassName = '';
-		$disabledLabel	  = '';
-
-		$handlerClass = 'inactive';
-		if ($this->canChange)
+		
+		//Icon alone
+		if ($this->viewType == 'icon')
 		{
-			$handlerClass = 'sortable-handler hasTooltip';
-		}
-		
-		if (!$this->enabled)
-		{
-			$disabledLabel    = JText::_('JDOM_ORDERING_DISABLED');
-			$disableClassName = 'inactive tip-top';	
-		}
-		
-		$htmlIcon = JDom::_('html.icon', array(
-			'icon' => 'icomoon-menu'
-		));
-		
-		
-		$html .= JDom::_('html.fly', array(
-			'markup' => 'span',
-			'domClass' => $handlerClass . ' ' . $disableClassName,
-			'selectors' => array(
-				'title' => $disabledLabel
-				
-			),
+			$html .= JDom::_('html.icon', array(
+				'icon' => $this->icon,
+				'tooltip' => true,
+				'title' => $this->text,
+				'color' => $this->color
+			));
 			
-			'dataValue' => $htmlIcon
-		
-		));
-		
-		if ($this->enabled)
-		{			
-			//TEXT INPUT
-			$html .= $this->buildInput($this->showInput);
+			return $html;
 		}
 		
+		
+		//Icon
+		if ($this->viewType == 'both')
+		{
+			$html .= JDom::_('html.icon', array(
+				'icon' => $this->icon,
+			));
+						
+		}
+
+		$html .= $this->text;
+
+		//Embed in label
+		$html = JDom::_('html.label', array(
+			'content' => $html,
+			'color' => $this->color		
+		));
+
 		return $html;
 	}
-	
+
 }

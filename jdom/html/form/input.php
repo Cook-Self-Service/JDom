@@ -90,8 +90,8 @@ class JDomHtmlFormInput extends JDomHtmlForm
 		$this->arg('dateFormat' 			, null, $args);
 		$this->arg('validatorRegex' 		, null, $args);
 		$this->arg('validatorMsgInfo' 		, null, $args);
-		$this->arg('validatorMsgIncorrect' 	, null, $args, "JDOM_VALIDATOR_INCORRECT");
-		$this->arg('validatorMsgRequired' 	, null, $args, "JDOM_VALIDATOR_REQUIRED");
+		$this->arg('validatorMsgIncorrect' 	, null, $args, "PLG_JDOM_VALIDATOR_INCORRECT");
+		$this->arg('validatorMsgRequired' 	, null, $args, "PLG_JDOM_VALIDATOR_REQUIRED");
 		$this->arg('placeholder' 			, null, $args);
 		$this->arg('title' 			, null, $args);
 		
