@@ -10,8 +10,6 @@ defined('_JEXEC') or die;
 @define("DS", DIRECTORY_SEPARATOR);
 @define('PATH_LIBRARY_JDOM', JPATH_SITE . DS . 'libraries' . DS . 'jdom');
 
-// workaround for CkJLoader
-class CkJLoader extends JLoader{}
 jimport('joomla.version');
 $version = new JVersion();
 
@@ -47,6 +45,6 @@ class plgSystemJdom extends JPlugin
 {
     public function onAfterInitialise()
     {
-		JLoader::register('JDom', JPATH_SITE . DS . 'media' . DS . 'jdom' . DS . 'dom.php');
+		JLoader::register('JDom', JPATH_SITE . DS . 'libraries' . DS . 'jdom' . DS . 'dom.php');
     }
 }
