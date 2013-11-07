@@ -1,9 +1,8 @@
 <?php
 /**
- * @copyright	Copyright (C) 2013 G. Tomaselli, Inc. All rights reserved.
- * @author		G. Tomaselli - http://bygiro.com - girotomaselli@gmail.com
- * @license     GNU General Public License version 2 or later.
- * JDOM library by j-cook service http://j-cook.pro
+ * @copyright	Copyright (C) 2013 Cook Self Service. All rights reserved.
+ * @author		J. HUARD (http://j-cook.pro) - G. Tomaselli (http://bygiro.com)
+ * @license     MIT License (MIT)
  */
  
 defined('_JEXEC') or die;
