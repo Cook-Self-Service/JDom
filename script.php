@@ -158,7 +158,7 @@ class plgsystemjdomInstallerScript
          */
         public function uninstall(JAdapterInstance $adapter){
 			
-			// !?!?!? missing the postflight on uninstall ?!?!
+			// We want to call postflight after uninstall
 			self::postflight('uninstall', $adapter);
 		}
 		
