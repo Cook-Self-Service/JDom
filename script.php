@@ -176,7 +176,8 @@ class plgsystemjdomInstallerScript
 	*
 	* @param   string  $extension  The extension alias in #__extensions table
 	*/
-	function getManifest($extension = 'jdom') {
+	function getManifest($extension = 'jdom')
+	{
 		$db = JFactory::getDbo();
 		$db->setQuery('SELECT manifest_cache FROM #__extensions WHERE type="plugin" AND element = "'. $extension .'"');
 		$manifest = json_decode( $db->loadResult(), true );
