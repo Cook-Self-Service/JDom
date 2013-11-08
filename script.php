@@ -56,8 +56,11 @@ class plgsystemjdomInstallerScript
 		$old_params = $this->old_params;
 
 		$parent = $adapter->get('parent');
+
+		$paths = $parent->get('paths');
 		if (!$paths)
 			$paths = $parent->get('_paths'); //Legacy 2.5
+
 				
 		$src = $paths['source'] . DS . 'jdom';
 		$dest = JPATH_SITE . DS . 'libraries' . DS . 'jdom';
