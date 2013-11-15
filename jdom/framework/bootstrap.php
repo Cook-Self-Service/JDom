@@ -28,12 +28,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomFrameworkBootstrap extends JDomFramework
 {
-	var $level = 2;				//Namespace position
 	var $fallback = 'core';		//Used for default
-
 	var $assetName = 'bootstrap';
-	
-
 	
 	/*
 	 * Constuctor

@@ -672,9 +672,10 @@ class JDom extends JObject
 			return;
 			
 	// Get script declarations
-		$scripts = array();
-		foreach(self::$loaded['JDom::addScriptInline'] as $content => $foo)
-			$scripts[] = $content;
+		$scripts = array();		
+		if (!empty(self::$loaded['JDom::addScriptInline']))
+			foreach(self::$loaded['JDom::addScriptInline'] as $content => $foo)
+				$scripts[] = $content;
 
 		if (!count($scripts))
 			return '';
@@ -695,14 +696,15 @@ class JDom extends JObject
 	{
 		$html = '';
 		// Generate stylesheet links
-		foreach (self::$loaded['JDom::addStyleSheet'] as $url => $foo)
-		{
-			$cssFile = $this->searchFile($url, false);
-			if ($cssFile)
-				$cssFile = self::pathToUrl($cssFile);
-
-			$html .= '<link rel="stylesheet" href="' . $cssFile . '" type="text/css"/>';
-		}
+		if (!empty(self::$loaded['JDom::addStyleSheet']))
+			foreach (self::$loaded['JDom::addStyleSheet'] as $url => $foo)
+			{
+				$cssFile = $this->searchFile($url, false);
+				if ($cssFile)
+					$cssFile = self::pathToUrl($cssFile);
+	
+				$html .= '<link rel="stylesheet" href="' . $cssFile . '" type="text/css"/>';
+			}
 
 		return $html;
 	}
