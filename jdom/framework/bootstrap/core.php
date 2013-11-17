@@ -65,10 +65,14 @@ class JDomFrameworkBootstrapCore extends JDomFrameworkBootstrap
 	
 	function buildCss()
 	{
+		//Bootstrap CSS is already in the core since Joomla 3.2
+		if ($this->jVersion('3.2'))
+			return;
+
 		//Bootstrap should not be used
 		if (!$this->useFramework('bootstrap'))
 			return;
-
+			
 		$this->attachCss[] = 'bootstrap.min.css';
 		$this->attachCss[] = 'bootstrap-responsive.min.css';
 		$this->attachCss[] = 'bootstrap-extended.css';

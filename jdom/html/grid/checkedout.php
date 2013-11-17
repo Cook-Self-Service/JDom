@@ -22,6 +22,13 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlGridCheckedout extends JDomHtmlGrid
 {
+	
+	var $assetName = 'joomla';
+
+	var $attachJs = array(
+		'joomla.js'
+	);
+	
 	protected $keyCheckedOut = null;
 	protected $keyCheckedOutTime = null;
 	protected $keyEditor = null;
