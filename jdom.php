@@ -45,6 +45,10 @@ class plgSystemJdom extends JPlugin
 {
     public function onAfterInitialise()
     {
+		// load plugin language file
+		$language = JFactory::getLanguage();
+		$language->load('plg_system_jdom', JPATH_ADMINISTRATOR);
+	
 		JLoader::register('JDom', JPATH_SITE . DS . 'libraries' . DS . 'jdom' . DS . 'dom.php');
     }
 }
