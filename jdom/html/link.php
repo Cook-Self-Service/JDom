@@ -32,8 +32,6 @@ class JDomHtmlLink extends JDomHtml
 	protected $content;
 	protected $target; // Can be also 'modal'
 	protected $handler; // Can be 'iframe'
-	protected $modal_width;
-	protected $modal_height;
 	protected $alertConfirm;
 
 
@@ -73,10 +71,8 @@ class JDomHtmlLink extends JDomHtml
 		$this->arg('target'			, null, $args);
 		$this->arg('handler'		, null, $args, 'iframe');
 		$this->arg('domClass'		, null, $args);
-		$this->arg('modal_width'	, null, $args);
-		$this->arg('modal_height'	, null, $args);
 		$this->arg('alertConfirm'	, null, $args);
-
+		
 	}
 
 	function buildLink()
@@ -140,16 +136,18 @@ class JDomHtmlLink extends JDomHtml
 		$rel = "{";
 		$rel.= "handler: '" . ($this->handler?$this->handler:'') . "'";
 
-		if ($this->modal_width && $this->modal_height)
+		if (!empty($this->modalWidth) && !empty($this->modalHeight))
 		{
-			$rel .=	", size: {x: " . ((int)$this->modal_width?(int)$this->modal_width:"null")
-						. 	", y: " . ((int)$this->modal_height?(int)$this->modal_height:"null")
+			$w = (int)$this->modalWidth;
+			$h = (int)$this->modalHeight;
+			
+			$rel .=	", size: {x: " . ($w?$w:"null")
+						. 	", y: " . ($h?$h:"null")
 						. "}";
 		}
 		$rel.=	"}";
 		
 		$this->addSelector('rel', $rel);
-
 	}
 
 	protected function parseVars($vars)

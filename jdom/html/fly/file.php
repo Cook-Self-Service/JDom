@@ -23,6 +23,7 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 {
 	var $fallback = 'default';		//Used for default
 
+	
 
 	protected $indirect;
 	protected $width;
@@ -115,7 +116,7 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 				'width' => $this->width,
 				'height' => $this->height,
 				'attrs' => $this->attrs,
-				'download' => ($this->target == 'download')
+				//'download' => ($this->target == 'download') /* FIXED : Do not send target for the thumb */
 			
 			);
 

@@ -47,8 +47,8 @@ class JDomHtml extends JDom
 	protected $popover;
 	protected $popoverOptions;
 	protected $responsive;
-	protected $modal_width;
-	protected $modal_height;
+	protected $modalWidth;
+	protected $modalHeight;
 	protected $iconLibrary;
 
 
@@ -90,8 +90,20 @@ class JDomHtml extends JDom
 
 		$this->arg('popover',		 	null, $args);
 		$this->arg('popoverOptions', 	null, $args);
+		
+		$this->arg('modalWidth'		, null, $args);
+		$this->arg('modalHeight'	, null, $args);
+		
+		
 		$this->arg('modal_width', 	null, $args);
+		if (!empty($this->modal_width))
+			$this->modalWidth = $this->modal_width;
+
 		$this->arg('modal_height', 	null, $args);
+		if (!empty($this->modal_height))
+			$this->modalHeight = $this->modal_height;
+		
+		
 		$this->arg('iconLibrary', 	null, $args, 'icomoon');
 		
 		
@@ -366,20 +378,50 @@ class JDomHtml extends JDom
 
 		if ((isset($this->href) || isset($this->target) ||  isset($this->task)) && (isset($this->dataValue)) && (!empty($this->dataValue)))
 		{
-			$html = JDom::_("html.link", array(
-				'href' => (isset($this->href)?$this->href:null),
-				'task' => (isset($this->task)?$this->task:null),
-				'num' => (isset($this->num)?$this->num:null),
-				'link_title' => (isset($this->link_title)?$this->link_title:null),
-				'selectors' => (isset($this->linkSelectors)?$this->linkSelectors:null),
+			
+			$followersVars = array(
+				'href' => null, 
+				'task' => null, 
+				'num' => null, 
+				'link_title' => null, 
+				'target' => null,
+				'handler' => null,
+				'modalWidth' => null,
+				'modalHeight' => null,
+				'modal_width' => null,
+				'modal_height' => null, 
+				'tooltip' => null, 
+				'enabled' => null, 
+				
+			);
+		
+			$options = array(
 				'content' => $html,
-				'target' => (isset($this->target)?$this->target:null),
-				'handler' => (isset($this->handler)?$this->handler:null),
-				'modal_width' => (isset($this->modal_width)?$this->modal_width:null),
-				'modal_height' => (isset($this->modal_height)?$this->modal_height:null),
-				'tooltip' => (isset($this->tooltip)?$this->tooltip:null),
-				'enabled' => (isset($this->enabled)?$this->enabled:null),
-			));
+				
+				//Change var name
+				'selectors' => (isset($this->linkSelectors)?$this->linkSelectors:null),
+				
+			);
+			
+			
+			//Populate the options
+			foreach ($followersVars as $var => $default)
+			{
+				if (isset($this->$var))
+					$options[$var] = $this->$var;
+				
+				else if (isset($this->options[$var]))
+					$options[$var] = $this->options[$var];
+				
+				//Fallback
+				else
+					$options[$var] = $default;
+			}
+
+
+			//Build the JDom link wrapper
+			$html = JDom::_("html.link", $options);
+
 		}
 
 		return $html;
