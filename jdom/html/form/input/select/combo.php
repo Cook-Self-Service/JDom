@@ -25,6 +25,8 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 	var $canEmbed = true;
 	
 	protected $ui;
+	protected $multiple;
+	protected $valueKey;
 	
 	/*
 	 * Constuctor
@@ -52,6 +54,12 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 	{
 		parent::__construct($args);
 		$this->arg('ui', 	null, $args);
+		$this->arg('multiple', 	null, $args);
+		$this->arg('valueKey', 	null, $args, $this->dataKey);
+		
+		if ($this->multiple)
+			$this->domName .= '[]';
+		
 	}
 
 	function build()
@@ -70,6 +78,7 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 		}
 
 		$html =	'<select id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+			. 	($this->multiple?' multiple':'')
 			.	((int)$this->size > 1?' size="' . (int)$this->size . '"':'') . '>' .LN
 			.	$this->indent($this->buildDefault(), 1)
 			.	$this->indent($options, 1)
@@ -189,8 +198,6 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 		return $html;
 	}
 
-
-
 	function buildOption($item, $listKey, $labelKey, $prefix = '')
 	{
 		//If item is an array, convert it to an object
@@ -204,10 +211,31 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 		if (!isset($item->$listKey))
 			$item->$listKey = null;
 
-		$selected = ($item->$listKey === $this->dataValue);
+		// In case of multi select
+		if (is_array($this->dataValue) && count($this->dataValue))
+		{
+			// When a list is send as value : reduce array to the dataKey only.
+			if (is_object($this->dataValue[0]))
+			{
+				$valueKey = $this->valueKey;
+				$values = array();
+				foreach($this->dataValue as $row)
+				{
+					$values[] = $row->$valueKey;
+				}				
+			}
+			else
+				$values = $this->dataValue;
+			
+			$selected = in_array((int)($item->$listKey), $values);
+		}
+		
 		//Integer compatibility when possible
-		if (is_integer($this->dataValue))			
+		else if (is_integer($this->dataValue))			
 			$selected = ((int)$item->$listKey === $this->dataValue);
+		else
+			$selected = ($item->$listKey === $this->dataValue);
+			
 
 		$html =	'<option value="'
 			.	htmlspecialchars($item->$listKey, ENT_COMPAT, 'UTF-8')
@@ -219,6 +247,5 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 
 		return $html;
 	}
-
 
 }

@@ -7,8 +7,11 @@
  
 defined('_JEXEC') or die;
 
-@define("DS", DIRECTORY_SEPARATOR);
-@define('PATH_LIBRARY_JDOM', JPATH_SITE . DS . 'libraries' . DS . 'jdom');
+defined('DS') or define('DS',DIRECTORY_SEPARATOR);
+defined('BR') or define("BR", "<br />");
+defined('LN') or define("LN", "\n");
+
+if(!defined('PATH_LIBRARY_JDOM'))  define('PATH_LIBRARY_JDOM', JPATH_SITE . DS . 'libraries' . DS . 'jdom');
 
 jimport('joomla.version');
 $version = new JVersion();

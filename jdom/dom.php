@@ -684,7 +684,7 @@ class JDom extends JObject
 			. implode(";\n", $scripts) 
 			. '});';
 
-		$jsScript .= '<script type="text/javascript">'
+		$jsScript = '<script type="text/javascript">'
 			.	$jsScriptCallback
 			. 	'</script>';
 		

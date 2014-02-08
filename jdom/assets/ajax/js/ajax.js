@@ -20,13 +20,20 @@
 *               \_)  (_/
 */
 
+
+// Static AJAX caller : Entry point to instance a node
 (function($) {
 	$.fn.jdomAjax = function(options)
 	{
 		var thisp = this;
+		
+		// Load the correct Hook node plugin
+		var plugin = 'defaults';
+		if (typeof(options.plugin) != 'undefined')
+			plugin = options.plugin;
 
 	//Merge the options
-	    var opts = $.extend({}, $.fn.jdomAjax.defaults, options);
+	    var opts = $.extend({}, $.fn.jdomAjax[plugin], options);
 		if (!opts.data)
 			opts.data = new Object();
 
@@ -57,72 +64,102 @@
 			}
 		}
 
-	//getHTML
-		var getHTML = function(opts)
-		{
-			jQuery.ajax({
-				'type': opts.method,
-				'url': opts.url,
-				'data': opts.data,
-				'success': function(data, textStatus, jqXHR){
-					if (typeof(opts.success) != 'undefined')
-						opts.success(thisp, data, textStatus, jqXHR);
-
-				},
-				'error' : function(jqXHR, textStatus, errorThrown){
-					if (typeof(opts.error) != 'undefined')
-						opts.error(thisp, textStatus, errorThrown);
-				}
-
-			});
-
-		};
-
-		var getJSON = function(opts)
-		{
-			jQuery.getJSON(opts.url, opts.data, function(data) {
-
-				if (typeof(opts.successJSON) != 'undefined')
-					opts.successJSON(thisp, data);
-			});
-		};
-
-
-	//END OF THE FUNCTION, RETURN SCRIPT
-		return this.each(function()
-		{
-			//Execute for all instances
-
-			//Loading scripts (spinner eventually)
-			if (typeof(opts.loading) != 'undefined')
-				opts.loading(thisp);
-
-			//Choose the type of query (JSON, or HTML)
-			if (opts.result == 'JSON')
-				getJSON(opts);
-			else
-				getHTML(opts);
-		});
-
-
-
-	}
-
-
-//CONFIGURATION
-
-//Defines the defaults for your component
-	$.fn.jdomAjax.defaults =
+		// End of definition : init script
+		opts.initialize(this);
+		
+		//Return object class to sender
+		return opts;
+	};
+	
+	
+	
+// Hook base class	
+	$.fn.jdomAjax.hook = 
 	{
+		
+		// Default function : Define all div as ajax wrapper, then send the request
+		initialize: function(object)
+		{
+			var wrapper = object;
+			this.request(wrapper);
+		},
+		
+		
+	};
+	
+	
+
+// Hook Ajax Base Class: Contains all actions and application layer
+	
+	$.fn.jdomAjax.ajax = $.extend({}, $.fn.jdomAjax.hook,	
+	{
+
 		url:'index.php?tmpl=component',
 		method:'POST',
 		data:null,
 		dom:null,
 		token:parseInt(Math.random() * 9999999999),
 
-		loading: function(object)
+
+		request: function(div)
 		{
-			$('<div/>', {'class':'jdom-ajax-spinner'}).appendTo($(object));
+
+			//Loading scripts (spinner eventually)
+			this.loading(div);
+			
+
+	// Deprecated var : opts.result - Use opts.format
+	if (typeof(this.format) != 'undefined')
+		this.result = this.format;
+	
+		
+			//Choose the type of rendering (JSON, or HTML)
+			if (this.result == 'JSON')
+				this.getJSON(div);
+			else
+				this.getHTML(div);
+			
+		},
+
+
+	//getHTML
+		getHTML: function(div)
+		{
+			var thisp = this;
+			jQuery.ajax({
+				'type': this.method,
+				'url': this.url,
+				'data': this.data,
+				'success': function(data, textStatus, jqXHR){
+					if (typeof(thisp.success) != 'undefined')
+						thisp.success(div, data, textStatus, jqXHR);
+
+				},
+				'error' : function(jqXHR, textStatus, errorThrown){
+					if (typeof(thisp.error) != 'undefined')
+						opts.error(div, textStatus, errorThrown);
+				}
+
+			});
+
+		},
+
+		getJSON: function(div)
+		{
+			
+			var thisp = this;
+			
+			jQuery.getJSON(this.url, this.data, function(data)
+			{
+				thisp.successJSON(div, data);
+			});
+		},
+		
+				
+		
+		loading: function(div)
+		{
+			$('<div/>', {'class':'jdom-ajax-spinner'}).appendTo($(div));
 		},
 
 		success: function(object, data, textStatus, jqXHR)
@@ -147,17 +184,162 @@
 			}
 		},
 
+
+//TODO Test coverage
 		successJSON: function(object, data)
-		{
+		{			
+			var html = '';
+			var alertMsg = '';
+			var exceptions = [];
+			
+			
+			// Errors in HTML properly handled
+			if (typeof(data.transaction.htmlExceptions) != 'undefined')
+				html += data.transaction.htmlExceptions;
+				
+			// Alert message
+			if (typeof(data.transaction.rawExceptions) != 'undefined')
+				alertMsg += data.transaction.rawExceptions;
+			
+			// JSON exceptions
+			if (typeof(data.transaction.exceptions) != 'undefined')
+				exceptions = data.transaction.exceptions;
+
+			// Raw HTML
+			if (typeof(data.response.html) != 'undefined')
+				html += data.response.html;			
+					
+					
+			// Outputs
+			$(object).html('').html(html);
+			if (alertMsg != '')
+				alert(alertMsg);
 
 		},
+		
+		
+				
+	});
+	
+	
+// Hook Node Base Class
+	$.fn.jdomAjax.node = $.extend({}, $.fn.jdomAjax.ajax,
+	{
+		
+		
+		
+		
+		
+		
+		
+	});
 
+
+	
+	
+	
+	
+	
+// Hook Default Node Controller Class: Contains all actions and application layer
+	$.fn.jdomAjax.defaults = $.extend({}, $.fn.jdomAjax.node,
+	{
+		
+// EVENTS
 		error: function(object, jqXHR, textStatus, errorThrown)
 		{
+//TODO
 
-		}
-	};
+
+		},
+		
+
+//CONTROLLER
+
+		display: function()
+		{
+
+			//Create the HTML structure
+
+			//create the contents div
+			
+			
+		},
+		
+		edit: function()
+		{
+			//TODO s ...
+			// Use jQuery namespacing to find the strings and replace with inputs.
+			
+			// Create the FORM
+			// Create every single input
+			// Optionaly show extra informations or controls bigger than Fly > problem.
+
+
+			// Names conventions must be the same for grid, form, everithing...
+			
+		},
+		
+		save: function()
+		{
+			
+		},
+		
+		
+		remove: function()
+		{
+			
+		},
+		
+		addRow: function()
+		{
+			
+			
+		},
+		
+		
+		refresh: function()
+		{
+			
+			
+		},
+		
+		reorder: function()
+		{
+			
+		},
+
+
+
+
+//VIEW		
+		renderToolbar: function()
+		{
+			
+			
+		},
+		
+		renderForm: function()
+		{
+			
+			
+		},
+		
+		
+		renderContents: function()
+		{
+			
+		},
+		
+		
+		
+	});
+	
 })(jQuery);
+
+
+
+
+
 
 (function($) {
 	'use strict';

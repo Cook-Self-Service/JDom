@@ -179,7 +179,7 @@ class JDomHtmlFormInput extends JDomHtmlForm
 			'CLASS'			=> $this->buildDomClass(),		//With attrib name
 			'CLASSES'		=> $this->getDomClass(),		// Only classes
 			'SELECTORS'		=> $this->buildSelectors(),
-			'VALUE'			=> htmlspecialchars($this->dataValue, ENT_COMPAT, 'UTF-8'),
+			'VALUE'			=> (is_array($this->dataValue)?implode(',', $this->dataValue):htmlspecialchars($this->dataValue, ENT_COMPAT, 'UTF-8')),
 			'MESSAGE' 		=> $this->buildValidatorMessage(),
 			'VALIDOR_ICON' 	=> $this->buildValidatorIcon(),
 			'JSON_REL' 		=> htmlspecialchars($this->jsonArgs(), ENT_COMPAT, 'UTF-8'),

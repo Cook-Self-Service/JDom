@@ -129,7 +129,7 @@ class JDomHtmlFlyFileDefault extends JDomHtmlFlyFile
 		{
 			if (!$this->href)
 			{
-				$this->href = $this->getFileUrl();
+				$this->href = $this->getFileUrl(false, true);
 				$this->options['href'] = $this->href;
 			}
 
