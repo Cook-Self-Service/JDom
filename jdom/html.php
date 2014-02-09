@@ -49,6 +49,9 @@ class JDomHtml extends JDom
 	protected $responsive;
 	protected $modalWidth;
 	protected $modalHeight;
+	protected $modalOnclose;
+	protected $modalScrolling;
+	
 	protected $iconLibrary;
 
 
@@ -93,7 +96,8 @@ class JDomHtml extends JDom
 		
 		$this->arg('modalWidth'		, null, $args);
 		$this->arg('modalHeight'	, null, $args);
-		
+		$this->arg('modalOnclose', 	null, $args);
+		$this->arg('modalScrolling', 	null, $args);
 		
 		$this->arg('modal_width', 	null, $args);
 		if (!empty($this->modal_width))

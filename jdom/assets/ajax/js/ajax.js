@@ -76,14 +76,14 @@
 // Hook base class	
 	$.fn.jdomAjax.hook = 
 	{
+		domContents:null,
 		
 		// Default function : Define all div as ajax wrapper, then send the request
 		initialize: function(object)
 		{
-			var wrapper = object;
-			this.request(wrapper);
+			this.domContents = object;
+			this.request();
 		},
-		
 		
 	};
 	
@@ -101,12 +101,11 @@
 		token:parseInt(Math.random() * 9999999999),
 
 
-		request: function(div)
+		request: function()
 		{
-
+			var div = this.domContents;
 			//Loading scripts (spinner eventually)
 			this.loading(div);
-			
 
 	// Deprecated var : opts.result - Use opts.format
 	if (typeof(this.format) != 'undefined')

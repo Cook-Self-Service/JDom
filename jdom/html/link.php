@@ -136,7 +136,7 @@ class JDomHtmlLink extends JDomHtml
 		$rel = "{";
 		$rel.= "handler: '" . ($this->handler?$this->handler:'') . "'";
 
-		if (!empty($this->modalWidth) && !empty($this->modalHeight))
+		if ($this->modalWidth && $this->modalHeight)
 		{
 			$w = (int)$this->modalWidth;
 			$h = (int)$this->modalHeight;
@@ -145,6 +145,20 @@ class JDomHtmlLink extends JDomHtml
 						. 	", y: " . ($h?$h:"null")
 						. "}";
 		}
+		if ($this->modalScrolling)
+		{
+			$options = array("auto", "no", "yes");
+			if (!in_array(strtolower($this->modalScrolling), $options))
+				$this->modalScrolling = "auto";
+
+			$rel .=	", iframeOptions: {scrolling:'" . $this->modalScrolling
+						. "'}";
+		}
+		if ($this->modalOnclose)
+		{
+			$rel .=	", onClose: function() {" . $this->modalOnclose . "}";
+		}
+		
 		$rel.=	"}";
 		
 		$this->addSelector('rel', $rel);
