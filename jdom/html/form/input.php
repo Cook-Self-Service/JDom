@@ -179,11 +179,41 @@ class JDomHtmlFormInput extends JDomHtmlForm
 			'CLASS'			=> $this->buildDomClass(),		//With attrib name
 			'CLASSES'		=> $this->getDomClass(),		// Only classes
 			'SELECTORS'		=> $this->buildSelectors(),
-			'VALUE'			=> (is_array($this->dataValue)?implode(',', $this->dataValue):htmlspecialchars($this->dataValue, ENT_COMPAT, 'UTF-8')),
+			'VALUE'			=> $this->getInputValue(),
 			'MESSAGE' 		=> $this->buildValidatorMessage(),
 			'VALIDOR_ICON' 	=> $this->buildValidatorIcon(),
 			'JSON_REL' 		=> htmlspecialchars($this->jsonArgs(), ENT_COMPAT, 'UTF-8'),
 		), $vars));
+	}
+
+	protected function getInputValue()
+	{
+		$value = $this->dataValue;
+		
+		// Protect the string
+		if (is_string($value))
+			return  htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
+
+
+		if (is_array($value))
+		{
+			//Empty array
+			if (!count($value))
+				return '';
+			
+			// Simple array of integer
+			if (is_int($value[0]))
+				return implode(',', $value);
+			
+			// Other type of array : Not handled in value markup property
+			return '';
+		}
+		
+		// JSon an object
+		if (is_object($value))
+			return json_encode($value);
+	
+		return '';
 	}
 	
 	function getInputName($suffix = null)
