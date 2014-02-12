@@ -190,6 +190,10 @@ class JDomHtmlFormInput extends JDomHtmlForm
 	{
 		$value = $this->dataValue;
 		
+		// Integers optimization.
+		if (is_int($value))
+			return $value;
+				
 		// Protect the string
 		if (is_string($value))
 			return  htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
