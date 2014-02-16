@@ -354,7 +354,8 @@ class JDomHtmlFormInputFileDefault extends JDomHtmlFormInputFile
 		$idView = $id . '-view'; //Optimized
 		
 		//Create hidden input (file)
-		$htmlInputHidden = '<input type="file" id="<%DOM_ID%>" name="<%INPUT_NAME%>" ' 
+		$onchange = "jQuery(this).closest('div').find('#" . $idView . "').val(jQuery(this).val());";
+		$htmlInputHidden = '<input onChange="'. $onchange .'" type="file" id="<%DOM_ID%>" name="<%INPUT_NAME%>" ' 
 			. ' style="display:none;"'
 			.	' value="<%VALUE%>"'
 			.	'/>' .LN;	
