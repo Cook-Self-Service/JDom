@@ -67,6 +67,9 @@ class JDomHtmlToolbar extends JDomHtml
 			$items = $this->bar;
 
 		$this->items = $items;
+
+		//Require the Joomla native javascript class
+		JHtml::_('behavior.framework');
 	}
 
 
