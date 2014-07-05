@@ -22,9 +22,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInputEditor extends JDomHtmlFormInput
 {
-	var $level = 4;			//Namespace position
-	var $last = true;		//This class is last call
-
 
 	var $cols;
 	var $rows;
