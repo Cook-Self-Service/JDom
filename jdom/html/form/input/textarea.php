@@ -22,11 +22,11 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInputTextarea extends JDomHtmlFormInput
 {
-	var $level = 4;			//Namespace position
-	var $last = true;		//This class is last call
-
 	var $cols;
 	var $rows;
+	var $width;
+	var $height;
+
 
 	/*
 	 * Constuctor
@@ -40,6 +40,8 @@ class JDomHtmlFormInputTextarea extends JDomHtmlFormInput
 	 *
 	 * 	@cols		: Textarea width (in caracters)
 	 * 	@rows		: Textarea height (in caracters)
+	 *	@width		: Apply CSS width and replace cols value
+	 *	@height		: Apply CSS height and replace rows value
 	 * 	@domClass	: CSS class
 	 * 	@selectors	: raw selectors (Array) ie: javascript events
 	 */
@@ -48,19 +50,35 @@ class JDomHtmlFormInputTextarea extends JDomHtmlFormInput
 
 		parent::__construct($args);
 
-		$this->arg('cols'		, 6, $args, '32');
-		$this->arg('rows'		, 7, $args, '4');
-		$this->arg('domClass'	, 8, $args);
-		$this->arg('selectors'	, 9, $args);
+		$this->arg('cols'	, null, $args, '32');
+		$this->arg('rows'	, null, $args, '4');
+		$this->arg('width'	, null, $args);
+		$this->arg('height'	, null, $args);
+		$this->arg('domClass'	, null, $args);
+		$this->arg('selectors'	, null, $args);
 
 
 	}
 
 	function build()
 	{
+		
+		if (!empty($this->width))
+		{
+			$this->cols = null;
+			$this->addStyle('width', $this->width);
+		}
+
+		if (!empty($this->height))
+		{
+			$this->rows = null;
+			$this->addStyle('height', $this->height);
+		}
+		
+					
 		$html =	'<textarea id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
-			.	' cols="' . $this->cols . '"'
-			.	' rows="' . $this->rows . '"'
+			.	($this->cols?' cols="' . $this->cols . '"':'')
+			.	($this->rows?' rows="' . $this->rows . '"':'')
 			.	'>'
 			.	'<%VALUE%>'
 			.	'</textarea>' .LN
