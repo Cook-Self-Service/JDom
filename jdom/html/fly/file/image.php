@@ -100,7 +100,7 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
             .   '/>';
 
             
-		if ($this->frame)
+		if ($this->frame && $pos->wrapWidth && $pos->wrapHeight)
 		{
 			$html = "\n" . '<div class="img-zone" style="width:' . $pos->wrapWidth . 'px;height:' . $pos->wrapHeight . 'px; overflow:hidden;'
             .   'display:inline-block;' . $imgStyle . '"'
