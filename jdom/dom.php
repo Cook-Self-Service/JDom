@@ -313,10 +313,10 @@ class JDom extends JObject
 		if (!$class)
 			return $this->error('Not found : <strong>' . $this->namespace . '</strong>');
 		
-		return $class->output();
+		return $class->output(true);
 	}
 	
-	public function output()
+	public function output($fallback = false)
 	{
 		//ACL Access
 		if (!$this->access())
@@ -324,16 +324,20 @@ class JDom extends JObject
 		
 		//HTML
 		$html = $this->build();
-		
-		//EMBED LINK
-		if (method_exists($this, 'embedLink'))
-			$html = $this->embedLink($html);
-		
-		//Assets implementations
-		$this->implementAssets();
-		
-		if ($this->isAjax())
-			$this->ajaxHeader($html);	//Embed javascript and CSS in case of Ajax call
+	
+		// Prevent for doubled instances and wrapped structures
+		if (!$fallback)
+		{	
+			//EMBED LINK
+			if (method_exists($this, 'embedLink'))
+				$html = $this->embedLink($html);
+			
+			//Assets implementations
+			$this->implementAssets();
+			
+			if ($this->isAjax())
+				$this->ajaxHeader($html);	//Embed javascript and CSS in case of Ajax call
+		}
 		
 		//Parser
 		$html = $this->parse($html);   //Was Recursive ?
