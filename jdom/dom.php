@@ -251,6 +251,30 @@ class JDom extends JObject
 			return null;
 		
 		$class = new $className($this->args);
+
+		//Load the fallback class
+		if (!method_exists($class, 'build'))
+		{
+			
+			$fallback = $class->fallback;
+			if (!empty($fallback))
+			{
+				$className .= ucfirst($fallback);
+				$namespace = $this->namespace .'.'. $fallback;
+				$this->loadClassFile($namespace);
+				
+				if (!class_exists($className))
+					return $class;
+				
+				$class = new $className($this->args);
+			}
+		
+		}
+		
+		if (!method_exists($class, 'build'))
+		{
+			exit($this->error('build() function not found.'));
+		}
 		
 		return $class;
 	}
@@ -299,24 +323,7 @@ class JDom extends JObject
 		return $class->output();
 	}
 	
-
-	
-	//Fallback function
-	public function build()
-	{
-		if (empty($this->fallback))
-			return $this->error('build() function not found.');
-					
-		$this->namespace .= '.' . $this->fallback;
-		
-		$class = $this->getClassInstance();
-		if (!$class)
-			return $this->error('Not found : <strong>' . $this->namespace . '</strong>');
-		
-		return $class->output(true);
-	}
-	
-	public function output($fallback = false)
+	public function output()
 	{
 		//ACL Access
 		if (!$this->access())
@@ -325,20 +332,17 @@ class JDom extends JObject
 		//HTML
 		$html = $this->build();
 	
-		// Prevent for doubled instances and wrapped structures
-		if (!$fallback)
-		{	
-			//EMBED LINK
-			if (method_exists($this, 'embedLink'))
-				$html = $this->embedLink($html);
-			
-			//Assets implementations
-			$this->implementAssets();
-			
-			if ($this->isAjax())
-				$this->ajaxHeader($html);	//Embed javascript and CSS in case of Ajax call
-		}
+	
+		//EMBED LINK
+		if (method_exists($this, 'embedLink'))
+			$html = $this->embedLink($html);
 		
+		//Assets implementations
+		$this->implementAssets();
+		
+		if ($this->isAjax())
+			$this->ajaxHeader($html);	//Embed javascript and CSS in case of Ajax call
+	
 		//Parser
 		$html = $this->parse($html);   //Was Recursive ?
 		
