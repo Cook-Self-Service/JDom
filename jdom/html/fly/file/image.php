@@ -27,6 +27,9 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 	protected $alt;
 	protected $title;
 	protected $frame;
+	protected $altKey;
+	protected $titleKey;
+
 
 	/*
 	 * Constuctor
@@ -53,6 +56,15 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 		$this->arg('alt'	, null, $args);
 		$this->arg('title'	, null, $args);
 		$this->arg('frame'	, null, $args, true);
+		$this->arg('altKey'	, null, $args);
+		$this->arg('titleKey'	, null, $args);
+
+
+		if (!empty($this->altKey))	
+			$this->alt = $this->parseKeys($this->dataObject, $this->altKey);
+			
+		if (!empty($this->titleKey))	
+			$this->title = $this->parseKeys($this->dataObject, $this->titleKey);
 	}
 
 
