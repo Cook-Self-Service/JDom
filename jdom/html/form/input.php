@@ -143,7 +143,7 @@ class JDomHtmlFormInput extends JDomHtmlForm
 		if (!$jsRule = self::getJsonRule())
 			return;
 
-		$script = 'jQuery.validationEngineLanguage.allRules.' . $this->validatorHandler . ' = ' . $jsRule;
+		$script = 'jQuery.validationEngineLanguage.allRules.' . $this->validatorHandler . ' = ' . $jsRule .';';
 		
 		$doc = JFactory::getDocument();
 		$doc->addScriptDeclaration($script);
