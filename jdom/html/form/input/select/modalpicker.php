@@ -65,7 +65,6 @@ class JDomHtmlFormInputSelectModalpicker extends JDomHtmlFormInputSelect
 		JHtml::_('behavior.modal', 'a.modal');
 
 		$id = $this->dataKey;
-		$name = $this->name;
 		$label = JText::_($this->nullLabel);
 
 		$link = $this->getRoute($this->route, 'modal');
