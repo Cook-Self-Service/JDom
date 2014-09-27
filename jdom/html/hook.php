@@ -40,14 +40,14 @@ class JDomHtmlHook extends JDomHtml
 	protected $domId;
 	protected $data;
 	protected $onReady;
-	
+
 	protected $method;
 	protected $format;
 	protected $states;
-	
+
 	protected $hookPlugin;
-	
-	
+
+
 
 	/*
 	 * Constuctor
@@ -74,14 +74,14 @@ class JDomHtmlHook extends JDomHtml
 		$this->context = explode(".", $this->context);
 
 		$this->arg('domId'	, null, $args, (count($this->context) >= 4?"_ajax_" . $this->context[1] . "_" . $this->context[3]:rand(1111111111, 8888888888)));
-		
+
 $this->arg('onReady'	, null, $args);
-	
-//HERE		
+
+//HERE
 		$this->arg('data'	, null, $args, array());
 		$this->arg('method'	, null, $args, 'GET');
-		
-		
+
+
 		$this->arg('format'	, null, $args, 'HTML');
 		$this->arg('states'	, null, $args, array());
 		$this->arg('hookPlugin'	, null, $args);
@@ -91,9 +91,9 @@ $this->arg('onReady'	, null, $args);
 	function buildJs()
 	{
 		$jsPluginName = str_replace('.', '_', $this->hookPlugin);
-		
-		
-		
+
+
+
 		// Attach all plugin files
 		$parts = explode('.', $this->hookPlugin);
 		$base = array();
@@ -103,22 +103,22 @@ $this->arg('onReady'	, null, $args);
 			$jsFile = 'plugins/' . implode('/', $base) . '.js';
 			$this->attachJs[] = $jsFile;
 		}
-		
+
 
 		$namespace = implode(".", $this->context);
-		
-		
+
+
 		$params = array(
 			"namespace" => $namespace,
 		);
-				
-		
+
+
 		$params['vars'] = $this->data;
 
 		if (count($this->states))
 			$params['vars']['__states'] = $this->states;
-		
-		
+
+
 		// Only if different of default (GET)
 		if ($this->method != 'GET')
 			$params['method'] = $this->method;
@@ -131,7 +131,7 @@ $this->arg('onReady'	, null, $args);
 
 		// Only if different of default (html) - result is deprecated.
 		if ($this->format != 'html')
-			$params['result'] = $params['format'] = $this->format;		
+			$params['result'] = $params['format'] = $this->format;
 
 
 	// Possible fallbacks
@@ -141,16 +141,16 @@ $this->arg('onReady'	, null, $args);
 	//	$params['loading'] = 'function(){}';
 
 
-		
+
 		$script = 'var hook = jQuery("#' . $this->domId . '").jdomAjax(' . json_encode($params) . ');';
-		
-//DEBUG		
+
+//DEBUG
 //		$script .= ' alert(hook.url);';
-		
+
 		$this->addScriptInline($script, true);
 
-		
-		
+
+
 		if ($this->onReady)
 			$this->addScriptInline($this->onReady, true);
 
