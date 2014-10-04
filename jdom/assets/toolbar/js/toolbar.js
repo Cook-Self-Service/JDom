@@ -105,6 +105,7 @@ jQuery(document).ready(function(){
 
 
 			case 'cancel':
+				validate = false;
 				if (modal)
 				{
 					close();
