@@ -22,9 +22,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInputClock extends JDomHtmlFormInput
 {
-	var $level = 4;			//Namespace position
-	var $last = true;		//This class is last call
-
 	var $timeFormat;
 
 
@@ -39,12 +36,16 @@ class JDomHtmlFormInputClock extends JDomHtmlFormInput
 	 *
 	 *
 	 *	@timeFormat	: Time Format
+	 *  @timezone	: Convert to the specified timezone. Can be : SERVER_UTC, USER_UTC
 	 */
 	function __construct($args)
 	{
 		parent::__construct($args);
 
 		$this->arg('timeFormat'		, null, $args, "%H:%M");
+		$this->arg('timezone' , null, $args);
+
+
 		if ($this->timeFormat)
 		{
 			//Instance the validator
@@ -53,17 +54,6 @@ class JDomHtmlFormInputClock extends JDomHtmlFormInput
 
 		$this->addValidatorHandler();
 
-		if ($this->dataValue
-			&& ($this->dataValue != "0000-00-00")
-			&& ($this->dataValue != "00:00:00")
-			&& ($this->dataValue != "0000-00-00 00:00:00"))
-		{
-			jimport('joomla.utilities.date');
-			$date = new JDate($this->dataValue);
-			$this->dataValue = $date->format($this->timeFormat);
-		}
-		else
-			$this->dataValue = "";
 
 	}
 
@@ -85,8 +75,29 @@ array(	'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}'
 	function build()
 	{
 
+		if ($this->dataValue
+			&& ($this->dataValue != "0000-00-00")
+			&& ($this->dataValue != "0000-00-00 00:00:00"))
+		{
+			jimport("joomla.utilities.date");
+
+			// Convert to the correct expected timezone (SERVER_UTC, USER_UTC)
+			if ($this->timezone)
+				$date = self::getDateUtc($this->dataValue, $this->timezone);
+			else
+				$date = JFactory::getDate($this->dataValue);
+
+			$formatedTime = $date->format($this->dateFormat, !empty($this->timezone));
+
+
+
+		}
+		else
+			$formatedTime = "";
+
+
 		$html = JDom::_('html.form.input.text', array_merge($this->options, array(
-												'dataValue' => $this->dataValue,
+												'dataValue' => $formatedTime,
 												'size' => 6,
 												)));
 

@@ -35,6 +35,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 	 *
 	 *
 	 *	@dateFormat	: Date Format
+	 *  @timezone	: Convert to the specified timezone. Can be : SERVER_UTC, USER_UTC
 	 */
 	function __construct($args)
 	{
@@ -42,63 +43,37 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 		parent::__construct($args);
 
 		$this->arg('dateFormat'	, null, $args, "Y-m-d");
-		$this->arg('filter'		, null, $args);
+		$this->arg('filter'		, null, $args);  // Deprecated : use timezone
+		$this->arg('timezone' , null, $args);
+
+		if (!empty($this->filter) && empty($this->timezone))
+			$this->timezone = $this->filter;
+
+	//JDate::toFormat() is deprecated. CONVERT Legacy Joomla Format
+		//Minutes : ‰M > i
+		$this->dateFormat = str_replace("%M", "i", $this->dateFormat);
+		//remove the %
+		$this->dateFormat = str_replace("%", "", $this->dateFormat);
 
 	}
 
 	function build()
 	{
-		$dateFormat = $this->dateFormat;
-
-		//JDate::toFormat() is deprecated. CONVERT Legacy Joomla Format
-		//Minutes : ‰M > i
-		$dateFormat = str_replace("%M", "i", $dateFormat);
-		//remove the %
-		$dateFormat = str_replace("%", "", $dateFormat);
-	
-	
 		$formatedDate = $this->dataValue;
 
 		if ($this->dataValue
 		&& ($this->dataValue != "0000-00-00")
-		&& ($this->dataValue != "00:00:00")
 		&& ($this->dataValue != "0000-00-00 00:00:00"))
 		{
 			jimport("joomla.utilities.date");
-			$date = JFactory::getDate($this->dataValue);
-			$formatedDate = $date->format($dateFormat);
 
-			$config = JFactory::getConfig();
-			// If a known filter is given use it.
-			switch (strtoupper(($this->filter)))
-			{
-				case 'SERVER_UTC':
-					// Convert a date to UTC based on the server timezone.
-					if (intval($this->dataValue))
-					{
-						// Get a date object based on the correct timezone.
-						$date = JFactory::getDate($this->dataValue, 'UTC');
-						$date->setTimezone(new DateTimeZone($config->get('offset')));
+			// Convert to the correct expected timezone (SERVER_UTC, USER_UTC)
+			if ($this->timezone)
+				$date = self::getDateUtc($this->dataValue, $this->timezone);
+			else
+				$date = JFactory::getDate($this->dataValue);
 
-						// Format the date string.
-						$formatedDate = $date->format($dateFormat, true);
-					}
-					break;
-
-				case 'USER_UTC':
-					// Convert a date to UTC based on the user timezone.
-					if (intval($this->dataValue))
-					{
-						// Get a date object based on the correct timezone.
-						$date = JFactory::getDate($this->dataValue, 'UTC');
-						$user = JFactory::getUser();
-						$date->setTimezone(new DateTimeZone($user->getParam('timezone', $config->get('offset'))));
-
-						// Format the date string.
-						$formatedDate = $date->format($dateFormat, true);
-					}
-					break;
-			}
+			$formatedDate = $date->format($this->dateFormat, !empty($this->timezone));
 		}
 		else
 			$formatedDate = "";
@@ -106,7 +81,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 		//Create the input
 		$dom = JDom::getInstance('html.form.input.text', array_merge($this->options, array(
 			'dataValue' => $formatedDate,
-			
+
 			// Does not herit the event
 			'submitEventName' => null
 		)));
@@ -115,7 +90,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 
 		//Create the icon
 		$htmlIcon = JDom::_('html.icon', array('icon' => 'calendar'));
-				
+
 		//Create the button (suffix -btn is to trigger the calendar)
 		$htmlButton = JDom::_('html.link.button', array(
 			'content' => $htmlIcon,
@@ -126,7 +101,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 
 		$html = '';
 		$html .= '<div class="btn-group">';
-		
+
 		$html .= '<div class="input-append">' .LN;
 		$html .= $htmlInput .LN;
 		$html .= $htmlButton .LN;
@@ -134,7 +109,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 
 		$html .= '</div>';
 
-		return $html;		
+		return $html;
 	}
 
 	function buildJs()
@@ -148,20 +123,20 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 			. $jsEvent
 			. "}cal.hide();}";
 		}
-				
+
 		$jsonConfig = "";
 		foreach($config as $key => $quotedValue)
 			$jsonConfig .= "," . $key . ":" . $quotedValue;
-	
+
 		// Load the calendar behavior
 		JHtml::_('behavior.calendar');
 		JHtml::_('behavior.tooltip');
-		
+
 		$jsonConfig .= ",firstDay: " . JFactory::getLanguage()->getFirstDay();
-		
+
 		$id = $this->getInputId();
 		$format = $this->legacyDateFormat($this->dateFormat);
-		
+
 		$js = 'window.addEvent(\'domready\', function() {if($("' . $id . '")) Calendar.setup({
 					// Id of the input field
 					inputField: "' . $id . '",
@@ -173,7 +148,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 					align: "Tl",
 					singleClick: true' . $jsonConfig . '
 					});});';
-					
+
 		$this->addScriptInline($js, true);
 	}
 }

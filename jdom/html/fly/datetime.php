@@ -22,9 +22,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFlyDatetime extends JDomHtmlFly
 {
-	var $level = 3;			//Namespace position
-	var $last = true;
-
 	protected $format;
 	protected $timezone;
 
@@ -38,6 +35,7 @@ class JDomHtmlFlyDatetime extends JDomHtmlFly
 	 * 	@dataValue	: value  default = dataObject->dataKey
 	 *
 	 *	@format		: Date format  -   default='Y-m-d'
+	 *  @timezone	: Convert to the specified timezone. Can be : SERVER_UTC, USER_UTC
 	 *
 	 */
 	function __construct($args)
@@ -46,7 +44,7 @@ class JDomHtmlFlyDatetime extends JDomHtmlFly
 		parent::__construct($args);
 		$this->arg('dateFormat' , null, $args, "Y-m-d");
 		$this->arg('timezone' , null, $args);
-		
+
 	//JDate::toFormat() is deprecated. CONVERT Legacy Joomla Format
 		//Minutes : ‰M > i
 		$this->dateFormat = str_replace("%M", "i", $this->dateFormat);
@@ -60,29 +58,19 @@ class JDomHtmlFlyDatetime extends JDomHtmlFly
 
 		if (!empty($this->dataValue)
 			&& ($this->dataValue != "0000-00-00")
-			&& ($this->dataValue != "00:00:00")
 			&& ($this->dataValue != "0000-00-00 00:00:00"))
 		{
 			jimport("joomla.utilities.date");
-			$date = new JDate($this->dataValue);
-			
-			if ($tz = $this->timezone)
-			{
-				if ($tz == 'server')
-				{
-					//TODO : Get the server timezone
-					$tz = 0; //DBG
-				}
-				else if ($tz == 'local')
-				{
-					//TODO : Get the current user local timezone
-					$tz = 0; //DBG
-				}
-				$date->setOffset((int)$tz);
-			}
-			$formatedDate = $date->format($this->dateFormat, !empty($tz));
+
+			// Convert to the correct expected timezone (SERVER_UTC, USER_UTC)
+			if ($this->timezone)
+				$date = self::getDateUtc($this->dataValue, $this->timezone);
+			else
+				$date = JFactory::getDate($this->dataValue);
+
+			$formatedDate = $date->format($this->dateFormat, !empty($this->timezone));
 		}
-		
+
 		$this->addClass('fly-date');
 
 		$html = '<span <%STYLE%><%CLASS%><%SELECTORS%>>'

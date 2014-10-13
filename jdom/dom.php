@@ -54,14 +54,14 @@ class JDom extends JObject
 
 	var $_pathSite = JPATH_SITE;
 	var $_uriJdom;
-	
+
 	protected $args;
 	protected $fallback;
-	
+
 	protected static $loaded = array();
 	protected $extension;
-	
-	
+
+
 	/*
 	* Define the priority order to search the classes
 	* TODO : Comment some lines, or change order depending on how you want to use this functionnality.
@@ -73,11 +73,11 @@ class JDom extends JObject
 			'client',		//	Files on the component root directory -> Search in the current client side (front or back)
 			'back',			//	Files on the BACK component root directory (Administrator client)
 	);
-	
+
 	//Some framworks are invasive, you can activate them manually see registerFrameworks()
 	public $frameworks = array();  //can contain : bootstrap, icomoon, chosen
-	
-	
+
+
 	/*
 	 * Constuctor
 	 *
@@ -91,16 +91,16 @@ class JDom extends JObject
 		$this->arg('options'	, 1, $args);
 
 		$this->args = $args;
-		
+
 		CkJLoader::registerPrefix('JDom', dirname(__FILE__));
 		CkJLoader::discover('JDom', dirname(__FILE__));
 
 		$this->app = JFactory::getApplication();
-		
+
 		$this->registerFrameworks();
 	}
 
-	
+
 	protected function registerFrameworks()
 	{
 		$version = new JVersion;
@@ -112,34 +112,34 @@ class JDom extends JObject
 			//$this->registerFramework('icomoon');	//Conflicts with bootstrap
 			$this->registerFramework('chosen');
 		}
-		
-		
+
+
 		if ($this->app->isSite())
 		{
 			$this->registerFramework('bootstrap');
-			$this->registerFramework('icomoon');		
+			$this->registerFramework('icomoon');
 			$this->registerFramework('chosen');
 		}
-		
+
 	}
 
 
 	public function set($property, $value = null)
 	{
 		$previous = isset($this->$property) ? $this->$property : null;
-		
+
 		$this->$property = $value;
 		$this->options[$property] = $value;
 		return $previous;
 	}
-	
-	
-	
+
+
+
 	protected function loadClassFile($namespace = null)
 	{
 		if (!$namespace)
 			$namespace = $this->namespace;
-		
+
 		$parts = explode('.', $namespace);
 		$currentParts = array();
 		$className = 'JDom';
@@ -229,131 +229,131 @@ class JDom extends JObject
 			$app->dom = new JDom();
 
 		$dom = $app->dom;
-		
+
 		if ($namespace)
 		{
 			$className = $dom->loadClassFile($namespace);
 			if (!class_exists($className))
 				return null;
-		
+
 			$class = new $className(array($namespace, $options));
 			return $class;
 		}
-		
+
 		return $dom;
 	}
-	
+
 	protected function getClassInstance()
 	{
 		$className = $this->loadClassFile();
-		
+
 		if (!class_exists($className))
 			return null;
-		
+
 		$class = new $className($this->args);
 
 		//Load the fallback class
 		if (!method_exists($class, 'build'))
 		{
-			
+
 			$fallback = $class->fallback;
 			if (!empty($fallback))
 			{
 				$className .= ucfirst($fallback);
 				$namespace = $this->namespace .'.'. $fallback;
 				$this->loadClassFile($namespace);
-				
+
 				if (!class_exists($className))
 					return $class;
-				
+
 				$class = new $className($this->args);
 			}
-		
+
 		}
-		
+
 		if (!method_exists($class, 'build'))
 		{
 			exit($this->error('build() function not found.'));
 		}
-		
+
 		return $class;
 	}
-	
+
 	public static function _()
 	{
 		$dom = self::getInstance();
 		$args = func_get_args();
-		
+
 		$dom->set('args', $args);
-		
+
 		return $dom->render($args);
 	}
-	
+
 	public function __()
 	{
 		$args = func_get_args();
 		$this->set('args', $args);
-		
+
 		return $this->render($args);
 	}
-	
+
 	protected function error($msg, $icon = null)
 	{
 		$html = '<strong>JDom Error</strong> : ' . $msg;
 		return $html;
 	}
-	
+
 	public function render($args = array())
 	{
 		//Get the namespace
 		if (empty($args[0]))
 			return $this->error('Namespace is undefined');
-		
+
 		$this->namespace = $namespace = $args[0];
-		
+
 		$class = $this->getClassInstance();
 		if (!$class)
 			return $this->error('Not found : <strong>' . $namespace . '</strong>');
-		
+
 		$class->loadOptions();
-		
+
 		//load the extension name
 		$this->getExtension();
-				
+
 		return $class->output();
 	}
-	
+
 	public function output()
 	{
 		//ACL Access
 		if (!$this->access())
 			return '';	//Not authorizated
-		
+
 		//HTML
 		$html = $this->build();
-	
-	
+
+
 		//EMBED LINK
 		if (method_exists($this, 'embedLink'))
 			$html = $this->embedLink($html);
-		
+
 		//Assets implementations
 		$this->implementAssets();
-		
+
 		if ($this->isAjax())
 			$this->ajaxHeader($html);	//Embed javascript and CSS in case of Ajax call
-	
+
 		//Parser
 		$html = $this->parse($html);   //Was Recursive ?
-		
+
 		return $html;
 	}
-	
+
 	public function registerFramework($framework)
 	{
-		$this->frameworks[$framework] = true;		
+		$this->frameworks[$framework] = true;
 	}
-	
+
 	protected function useFramework($framework)
 	{
 		$dom = JDom::getInstance();
@@ -361,20 +361,20 @@ class JDom extends JObject
 			return true;
 	}
 
-	
-	
+
+
 	protected function loadOptions()
 	{
 		if (!$this->args)
 			return;
-		
+
 		$options = array();
 		if (!empty($this->args[1]))
 			$options = $this->args[1];
-		
+
 		$this->options = $options;
 	}
-	
+
 	protected function arg($name, $i = null, $args = array(), $fallback = null)
 	{
 		$optionValue = $this->getOption($name);
@@ -410,13 +410,13 @@ class JDom extends JObject
 			return;
 		if (!is_array($this->options))
 			return;
-		
+
 		if (!(in_array($name, array_keys($this->options))))
 			return;
-		
+
 		if (!isset($this->options[$name]))
 			return;
-		
+
 		return $this->options[$name];
 	}
 
@@ -425,23 +425,23 @@ class JDom extends JObject
 		$dom = JDom::getInstance();
 		if ($extension = $dom->get('extension'))
 			return $extension;
-		
+
 		$extension = $this->getOption('extension');
 		if (!$extension)
 		{
 			$jinput = new JInput;
 			$extension = $jinput->get('option', null, 'CMD');
 		}
-		
+
 		$dom->set('extension', $extension);
 
 		return $extension;
 	}
-	
+
 	function getComponentHelper()
 	{
 		$helperClass = ucfirst(substr($this->getExtension(), 4)) . 'Helper';
-		
+
 		if (!class_exists($helperClass))
 		{
 			echo('Class <strong>' . $helperClass . '<strong> not found');
@@ -449,18 +449,18 @@ class JDom extends JObject
 		}
 		return $helperClass;
 	}
-	
+
 	public function isAjax()
 	{
 		$jinput = new JInput;
 		$layout = $jinput->get('layout', null, 'CMD');
 		if ($layout == 'ajax')
 			return true;
-		
+
 		return false;
 	}
-	
-	
+
+
 //DEPRECATED
 	public function getView()
 	{
@@ -487,7 +487,7 @@ class JDom extends JObject
 	}
 
 	public function buildJs()	{}
-	
+
 	protected function attachJsFiles()
 	{
 		//Javascript
@@ -528,22 +528,22 @@ class JDom extends JObject
 			$jsFile = self::pathToUrl($jsFile);
 			if (isset(self::$loaded[__METHOD__][$relativeName]))
 				return;
-			
+
 			if ($this->isAjax())
 			{
 				$jsScript = LN . '<script type="text/javascript">'
 				.	LN . 'jQuery.getScripts(' . json_encode(array($jsFile)). ', function(){});'
 				.	LN . '</script>';
-				
+
 				echo $jsScript;
 			}
 			else
 			{
 				$doc = JFactory::getDocument();
-				$doc->addScript($jsFile);				
+				$doc->addScript($jsFile);
 			}
-			
-			
+
+
 			self::$loaded[__METHOD__][$relativeName] = true;
 		}
 
@@ -567,20 +567,20 @@ class JDom extends JObject
 		self::$loaded[__METHOD__][$script] = true;
 
 	}
-	
+
 	protected function jsEmbedReady($script)
 	{
 		//Do not embed. Handled by the Ajax class callback
 		if ($this->isAjax())
 			return $script;
-		
+
 		$js = "jQuery('document').ready(function(){" . LN;
 		$js .= $this->indent($script, 1);
 		$js .= LN. "});";
 
 		return $js;
 	}
-	
+
 	protected function jsEmbedFramework($script, $embedFramework = 'jQuery')
 	{
 
@@ -647,10 +647,10 @@ class JDom extends JObject
 	{
 		if (isset(self::$loaded[__METHOD__][$relativeName]))
 				return;
-	
+
 		JFactory::getDocument()->addStyleDeclaration($css);
 		self::$loaded[__METHOD__][$css] = true;
-		
+
 	}
 
 
@@ -658,7 +658,7 @@ class JDom extends JObject
 	{
 		if (!$this->isAjax())
 			return;
-		
+
 		$js = $this->ajaxCallbackOnLoad();
 		$css = $this->ajaxAttachCss();
 		$html = $css . $js . $html;
@@ -672,30 +672,30 @@ class JDom extends JObject
 	{
 		if (!$this->isAjax())
 			return;
-	
+
 		//Ajax token is the unique fallback function name
 		$jinput = new JInput;
 		$token = $jinput->get('token', null, 'CMD');
 		if (!$token)
 			return;
-			
+
 	// Get script declarations
-		$scripts = array();		
+		$scripts = array();
 		if (!empty(self::$loaded['JDom::addScriptInline']))
 			foreach(self::$loaded['JDom::addScriptInline'] as $content => $foo)
 				$scripts[] = $content;
 
 		if (!count($scripts))
 			return '';
-		
-		$jsScriptCallback =  'registerCallback("' . $token . '", function(){' 
-			. implode(";\n", $scripts) 
+
+		$jsScriptCallback =  'registerCallback("' . $token . '", function(){'
+			. implode(";\n", $scripts)
 			. '});';
 
 		$jsScript = '<script type="text/javascript">'
 			.	$jsScriptCallback
 			. 	'</script>';
-		
+
 		return $jsScript;
 	}
 
@@ -710,7 +710,7 @@ class JDom extends JObject
 				$cssFile = $this->searchFile($url, false);
 				if ($cssFile)
 					$cssFile = self::pathToUrl($cssFile);
-	
+
 				$html .= '<link rel="stylesheet" href="' . $cssFile . '" type="text/css"/>';
 			}
 
@@ -721,7 +721,7 @@ class JDom extends JObject
 	{
 		if (!$this->assetName)
 			return;
-		
+
 		return dirname(__FILE__) .DS. 'assets' .DS. $this->assetName;
 	}
 
@@ -729,10 +729,10 @@ class JDom extends JObject
 	{
 		if (!$this->assetName)
 			return;
-		
+
 		if (!in_array($type, array('js', 'css', 'images', 'fonts')))
 			return;
-		
+
 		return $this->assetsDir() .DS. $type .DS. $name;
 	}
 
@@ -770,9 +770,9 @@ class JDom extends JObject
 	protected function parseVars($vars)
 	{
 		return array_merge(array(
-		
+
 		), $vars);
-		
+
 	}
 
 	protected function parse($pattern)
@@ -816,12 +816,12 @@ class JDom extends JObject
 
 			return JDom::_($namespace, $options);
 		}
-		
+
 		//Tags <% % > are deprecated use { } instead
 		$tag1 = '[<,{]%?';
 		$tag2 = '%?[>,}]';
 
-		
+
 		$matches = array();
 		if (preg_match_all("/" . $tag1 . "([a-zA-Z0-9_]+:)?([a-zA-Z0-9_]+)" . $tag2 . "/", $pattern, $matches))
 		{
@@ -903,7 +903,7 @@ class JDom extends JObject
 	{
 		JDom::getInstance()->_uriJdom = $uri;
 	}
-	
+
 	public function getUriJDomBase()
 	{
 		return JDom::getInstance()->_uriJdom;
@@ -913,17 +913,17 @@ class JDom extends JObject
     {
         $base = JDom::getInstance()->getPathSite();
         $uri = JDom::getInstance()->getUriJDomBase();
-        
+
         // Convert eventual Windows directory separators
         if (DS == "\\")
         {
             $path = str_replace(DS, "/", $path);
-            $base = str_replace(DS, "/", $base);            
+            $base = str_replace(DS, "/", $base);
         }
 
         // Reduce until the base
         $relUrl = $uri . substr($path, strlen($base));
- 
+
         if ($raw)
             return $relUrl;
 
@@ -950,7 +950,7 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 
 
 	protected function jVersion($ver, $comp = '>=')
-	{		
+	{
 		jimport('joomla.version');
 		$version = new JVersion();
 
@@ -962,16 +962,16 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 		if ($this->jVersion('3.0'))
 			return 'isis';
 		else
-			return 'bluestork';	
+			return 'bluestork';
 	}
 
 	protected function systemImagesDir()
 	{
 		$dir = 'templates' .DS. $this->adminTemplate() .DS. 'images' .DS. 'admin';
-		
+
 		if ($this->app->isSite())
 			$dir = "administrator" .DS . $dir;
-		
+
 		return $dir;
 	}
 
@@ -1056,9 +1056,9 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 	{
 		if (($target == 'modal') && empty($route['tmpl']))
 			$route['tmpl'] = 'component';
-			
+
 		$jinput = $this->app->input;
-						
+
 		$vars = array_merge(array_keys($route), array('option', 'view', 'layout', 'task', 'cid[]', 'tmpl'));
 		$followers = array('lang', 'Itemid', 'tmpl');
 
@@ -1094,8 +1094,8 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 
 		$url = JRoute::_("index.php?" . implode("&", $parts), false);
 
-		return $url;			
-		
+		return $url;
+
 	}
 
 	protected function access($aclAccess = null)
@@ -1137,26 +1137,53 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 			'\\','/','#','!','^','$','(',')','[',']','{','}','|','?','+','*','.',
 			'%?Y','%?y','%?m','%?d', '%?H', '%?I', 'i', '%?l', '%?M', '%?S', ' '
 		);
-		
+
 		$replacements = array(
 			'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}','\\|','\\?','\\+','\\*','\\.',
-			$d4,$d2,$d2,$d2,$d2,$d2,$d2,$d2,$d2,$d2,'\s'	
+			$d4,$d2,$d2,$d2,$d2,$d2,$d2,$d2,$d2,$d2,'\s'
 		);
 
 		return "^" . str_replace($patterns, $replacements, $dateFormat) . "$";
 	}
-	
+
 	function legacyDateFormat($dateFormat)
 	{
-		$patterns = array(	
+		$patterns = array(
 		'Y','y','m','d', 'H', 'i', 'l', 's');
 
-		$replacements =	array(	
+		$replacements =	array(
 		'%Y','%y','%m','%d', '%H', '%M', '%l', '%S');
 
 		return str_replace($patterns, $replacements, $dateFormat);
 
 	}
-	
-	
+
+	static function getDateUtc($dateValue, $tz)
+	{
+		$config = JFactory::getConfig();
+		$date = JFactory::getDate($dateValue, 'UTC');
+
+		switch (strtoupper($tz))
+		{
+			case 'SERVER_UTC':
+				// Convert a date to UTC based on the server timezone.
+
+				$date->setTimezone(new DateTimeZone($config->get('offset')));
+
+				break;
+
+			case 'USER_UTC':
+				// Convert a date to UTC based on the user timezone.
+
+				$user = JFactory::getUser();
+				$date->setTimezone(new DateTimeZone($user->getParam('timezone', $config->get('offset'))));
+
+				break;
+
+
+		}
+
+		return $date;
+	}
+
 }
