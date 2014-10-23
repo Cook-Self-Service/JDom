@@ -75,10 +75,8 @@ class JDomHtmlFormInputSearch extends JDomHtmlFormInput
 					'submitEventName' => 'onclick',
 				));
 						
-			$html .= '</div>';
 
 			//Clear Button
-			$html .= '<div class="btn-group">';
 						
 				$html .= JDom::_('html.link.button.icon', array(
 					'icon' => 'remove',
