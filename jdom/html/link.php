@@ -25,6 +25,7 @@ class JDomHtmlLink extends JDomHtml
 	var $fallback = 'default';	//Used for default
 
 	protected $href;
+	protected $base;
 	protected $task;
 	protected $num;
 	protected $link_js;
@@ -41,6 +42,7 @@ class JDomHtmlLink extends JDomHtml
 	 *  @options	: Configuration
 	 *
 	 *	@href		: Link
+	 *	@base		: URL Base file
 	 *	@task		: Task
 	 *	@num		: Row num (for grid tasks)
 	 *	@link_js	: Javascript for the link
@@ -52,7 +54,7 @@ class JDomHtmlLink extends JDomHtml
 	 *	@domClass	: CSS class of the link
 	 *	@modal_width	: Modal width
 	 *	@modal_height	: Modal height
-	 *  @alertConfirm	: will prompt an alert box message to confirm 
+	 *  @alertConfirm	: will prompt an alert box message to confirm
 	 *  @enabled	: Default true. Can disable the link
 	 *
 	 */
@@ -61,6 +63,7 @@ class JDomHtmlLink extends JDomHtml
 		parent::__construct($args);
 
 		$this->arg('href'			, null, $args);
+		$this->arg('base'			, null, $args);
 		$this->arg('task'			, null, $args);
 		$this->arg('num'			, null, $args);
 		$this->arg('link_js'		, null, $args); //Deprecated
@@ -72,29 +75,29 @@ class JDomHtmlLink extends JDomHtml
 		$this->arg('handler'		, null, $args, 'iframe');
 		$this->arg('domClass'		, null, $args);
 		$this->arg('alertConfirm'	, null, $args);
-		
+
 	}
 
 	function buildLink()
 	{
-		
+
 		if ($this->enabled)
 		{
 			$this->createRoute();
-				
+
 			if ($this->target == 'modal')
 				$this->modalLink();
-	
+
 			if ($this->task || isset($this->submit))
 				$this->jsCommand();
-			
+
 			$this->addStyle('cursor', 'pointer');
-			
+
 		}
 
 		if ($this->tooltip)
 			$this->addClass('hasTooltip hasTip');
-		
+
 		$html = "<a<%ID%><%CLASS%><%STYLE%><%TITLE%><%HREF%><%JS%><%TARGET%><%SELECTORS%>>"
 			.	$this->content
 			.	"</a>";
@@ -103,7 +106,7 @@ class JDomHtmlLink extends JDomHtml
 	}
 
 
-	
+
 
 	function getTaskExec($ctrl = false)
 	{
@@ -130,9 +133,9 @@ class JDomHtmlLink extends JDomHtml
 	function modalLink()
 	{
 		JHTML::_('behavior.modal');
-		
+
 		$this->addClass('modal');
-		
+
 		$rel = "{";
 		$rel.= "handler: '" . ($this->handler?$this->handler:'') . "'";
 
@@ -140,7 +143,7 @@ class JDomHtmlLink extends JDomHtml
 		{
 			$w = (int)$this->modalWidth;
 			$h = (int)$this->modalHeight;
-			
+
 			$rel .=	", size: {x: " . ($w?$w:"null")
 						. 	", y: " . ($h?$h:"null")
 						. "}";
@@ -158,9 +161,9 @@ class JDomHtmlLink extends JDomHtml
 		{
 			$rel .=	", onClose: function() {" . $this->modalOnclose . "}";
 		}
-		
+
 		$rel.=	"}";
-		
+
 		$this->addSelector('rel', $rel);
 	}
 
@@ -177,5 +180,5 @@ class JDomHtmlLink extends JDomHtml
 			'ID'		=> (isset($this->domId)?" id=\"" . $this->domId . "\"":'')
 		), $vars));
 	}
-	
+
 }

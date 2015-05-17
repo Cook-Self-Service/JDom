@@ -108,8 +108,8 @@ jQuery(document).ready(function(){
 				validate = false;
 				if (modal)
 				{
-					close();
-					return;
+					method = 'ajax';
+					redirect = 'close';
 				}
 				break;
 

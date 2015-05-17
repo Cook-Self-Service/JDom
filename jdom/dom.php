@@ -1094,6 +1094,16 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 
 		$url = JRoute::_("index.php?" . implode("&", $parts), false);
 
+		// Custom file url
+		if (isset($this->base) && !empty($this->base))
+			$url = $this->base . '?' . implode("&", $parts);
+
+		// Classic route to same Joomla instance + index.php
+		else
+			$url = JRoute::_("index.php?" . implode("&", $parts), false);
+
+
+
 		return $url;
 
 	}

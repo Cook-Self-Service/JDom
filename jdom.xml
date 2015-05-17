@@ -8,7 +8,7 @@
     <authorEmail>support@j-cook.pro</authorEmail>
     <authorUrl>http://www.j-cook.pro</authorUrl>
     <version>0.0.2</version>
-    <jdomversion>2.6.5</jdomversion>
+    <jdomversion>2.6.6</jdomversion>
     <description>JDom Library for Joomla.</description>
 
     <files>
