@@ -87,7 +87,7 @@ array(	'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}'
 			else
 				$date = JFactory::getDate($this->dataValue);
 
-			$formatedTime = $date->format($this->dateFormat, !empty($this->timezone));
+			$formatedTime = $date->format($this->timeFormat, !empty($this->timezone));
 
 
 
