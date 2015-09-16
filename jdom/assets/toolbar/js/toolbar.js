@@ -155,7 +155,7 @@ jQuery(document).ready(function(){
 	Joomla.submitAjax = function(form, redirect, onSuccess, domSpinner)
 	{
 		// Ajax node (Hook)
-		if (typeof($.fn.jdomAjax) != 'undefined')
+		if (typeof($.jdomAjax) != 'undefined')
 		{
 			$(form).jdomAjax({
 //				'debug':true,

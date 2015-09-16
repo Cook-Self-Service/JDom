@@ -909,27 +909,20 @@ class JDom extends JObject
 		return JDom::getInstance()->_uriJdom;
 	}
 
-    protected function pathToUrl($path, $raw = false)
-    {
-        $base = JDom::getInstance()->getPathSite();
-        $uri = JDom::getInstance()->getUriJDomBase();
+	protected function pathToUrl($path, $raw = false)
+	{
+		$base = JDom::getInstance()->getPathSite();
+		$uri = JDom::getInstance()->getUriJDomBase();
 
-        // Convert eventual Windows directory separators
-        if (DS == "\\")
-        {
-            $path = str_replace(DS, "/", $path);
-            $base = str_replace(DS, "/", $base);
-        }
+		$path = str_replace("\\", "/", $path);
+		$base = str_replace("\\", "/", $base);
 
-        // Reduce until the base
-        $relUrl = $uri . substr($path, strlen($base));
+		$relUrl = $uri . str_replace($base, '', $path);
+		if ($raw)
+			return $relUrl;
 
-        if ($raw)
-            return $relUrl;
-
-        // Return complete URL
-        return JURI::root(true) . $relUrl;
-    }
+		return JURI::root(true) . $relUrl;
+	}
 
 	protected function strftime2regex($format)
 	{
