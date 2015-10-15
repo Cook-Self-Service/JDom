@@ -23,7 +23,7 @@
 
 // Static AJAX caller : Entry point to instance a node
 (function($) {
-	$.jdomAjax = function(options)
+	$.fn.jdomAjax = function(options)
 	{
 		var thisp = this;
 
@@ -33,7 +33,7 @@
 			plugin = options.plugin;
 
 	//Merge the options
-	    var opts = $.extend({}, $.jdomAjax[plugin], options);
+	    var opts = $.extend({}, $.fn.jdomAjax[plugin], options);
 		if (!opts.data)
 			opts.data = new Object();
 
@@ -71,7 +71,7 @@
 	};
 
 // Hook base class
-	$.jdomAjax.hook =
+	$.fn.jdomAjax.hook =
 	{
 
 		domContents:null,
@@ -111,7 +111,7 @@
 /* Hook Ajax Base Class: Contains all actions and application layer */
 (function($) {
 
-	$.jdomAjax.ajax = $.extend({}, $.jdomAjax.hook,
+	$.fn.jdomAjax.ajax = $.extend({}, $.fn.jdomAjax.hook,
 	{
 
 		url:'index.php?tmpl=component',
@@ -506,7 +506,7 @@
 
 /* Hook Node Base Class */
 (function($) {
-	$.jdomAjax.node = $.extend({}, $.jdomAjax.ajax,
+	$.fn.jdomAjax.node = $.extend({}, $.fn.jdomAjax.ajax,
 	{
 
 
@@ -524,7 +524,7 @@
 /* Hook Default Node Controller Class: Contains all actions and application layer */
 (function($) {
 
-	$.jdomAjax.defaults = $.extend({}, $.jdomAjax.node,
+	$.fn.jdomAjax.defaults = $.extend({}, $.fn.jdomAjax.node,
 	{
 
 		debug:false,
@@ -619,7 +619,7 @@
 /* Form */
 (function($) {
 
-	$.jdomAjax.form = $.extend({}, $.jdomAjax.defaults,
+	$.fn.jdomAjax.form = $.extend({}, $.fn.jdomAjax.defaults,
 	{
 		method:'POST',
 		format:'JSON',

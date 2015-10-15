@@ -100,7 +100,9 @@ class JDomHtmlFlyFileDefault extends JDomHtmlFlyFile
 	function buildHref($type)
 	{
 		if ($this->target == 'download')
-			$this->target = 'download';
+		{
+
+		}
 		else if ($this->preview == 'modal')
 		{
 			switch($type)
@@ -120,6 +122,7 @@ class JDomHtmlFlyFileDefault extends JDomHtmlFlyFile
 			}
 
 			$this->options['target'] = $this->target;
+
 			$this->options['handler'] = $this->handler;
 
 		}

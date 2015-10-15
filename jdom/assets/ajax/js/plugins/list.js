@@ -2,7 +2,7 @@
 /* Hook LIST */
 (function($) {
 
-	$.jdomAjax.list = $.extend({}, $.jdomAjax.defaults,
+	$.fn.jdomAjax.list = $.extend({}, $.fn.jdomAjax.defaults,
 	{
 		method:'POST',
 		

@@ -23,6 +23,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 {
 	protected $dateFormat;
 	protected $filter;
+	protected $timezone;
 
 	/*
 	 * Constuctor

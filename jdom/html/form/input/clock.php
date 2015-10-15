@@ -22,7 +22,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInputClock extends JDomHtmlFormInput
 {
-	var $timeFormat;
+	protected $timeFormat;
+	protected $timezone;
 
 
 	/*
@@ -82,7 +83,7 @@ array(	'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}'
 			jimport("joomla.utilities.date");
 
 			// Convert to the correct expected timezone (SERVER_UTC, USER_UTC)
-			if ($this->timezone)
+			if (isset($this->timezone))
 				$date = self::getDateUtc($this->dataValue, $this->timezone);
 			else
 				$date = JFactory::getDate($this->dataValue);

@@ -2,7 +2,7 @@
 /* Hook : list.browse*/
 (function($) {
 
-	$.jdomAjax.list_browse = $.extend({}, $.jdomAjax.list,
+	$.fn.jdomAjax.list_browse = $.extend({}, $.fn.jdomAjax.list,
 	{
 
 		// Default function : Define all div as ajax wrapper, then send the request

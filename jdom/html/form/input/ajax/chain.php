@@ -50,7 +50,7 @@ class JDomHtmlFormInputAjaxChain extends JDomHtmlFormInputAjax
 	{
 		return '';
 	}
-	
+
 	function buildJs()
 	{
 		if (!$this->ajaxVars)
@@ -58,7 +58,7 @@ class JDomHtmlFormInputAjaxChain extends JDomHtmlFormInputAjax
 
 		if (!isset($this->ajaxVars['values']) || !is_array($this->ajaxVars['values']))
 			return;
-		
+
 		$selected = array_pop($this->ajaxVars['values']);
 		if (isset($selected) && ($selected || $selected != ''))
 		{
@@ -66,9 +66,9 @@ class JDomHtmlFormInputAjaxChain extends JDomHtmlFormInputAjax
 				"namespace":"' . implode(".", $this->ajaxContext) . '",
 				"vars":' . json_encode($this->ajaxVars) . '
 			});';
-		
+
 			$this->addScriptInline($js);
-		}	
+		}
 	}
 
 }

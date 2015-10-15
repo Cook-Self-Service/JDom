@@ -27,7 +27,7 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 	protected $iconKey;
 	protected $viewKey = 'viewType';
 	protected $viewType;
-	
+
 //	var $assetName = 'bootstrap'; //Dynamic in __construct
 	var $attachJs = array(
 		'radio.js'
@@ -102,20 +102,20 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 				$viewType = $item->$viewKey;
 			else
 				$viewType = 'both';
-			
+
 		}
-		
+
 		if (!in_array($viewType, array('icon', 'both')))
 			$iconKey = null;
-		
+
 		$text = $tooltipText = null;
 		if (in_array($viewType, array('text', 'both')))
 			$text = $this->parseKeys($item, $labelKey);
 		else
 			$tooltipText = $this->parseKeys($item, $labelKey);
-				
-		
-		$checked = ($item->$listKey == $this->dataValue);
+
+
+		$checked = (isset($item->$listKey) && ($item->$listKey == $this->dataValue));
 
 		$js = '';
 
@@ -133,8 +133,8 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 			.	($checked?' checked="checked"':'');
 
 		$html	.=	'/>'.LN;
-		
-		
+
+
 		$htmlIcon = '';
 		if ($iconKey)
 		{
@@ -145,7 +145,7 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 				)
 			));
 		}
-		
+
 		$html .= JDom::_('html.form.label', array(
 			'domId' => $id,
 			'label' => $htmlIcon . $text,
@@ -153,8 +153,8 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 			'tooltip' => ($tooltipText?true:false),
 			'title' => $tooltipText
 		)) .LN;
-	
-		
+
+
 		return $html;
 	}
 }

@@ -5,11 +5,11 @@
  * @license     GNU General Public License version 2 or later.
  * JDOM library by j-cook service http://j-cook.pro
  */
- 
+
 defined('_JEXEC') or die;
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
-@define("DS", DIRECTORY_SEPARATOR);
+defined("DS") || define("DS", DIRECTORY_SEPARATOR);
 
 class plgsystemjdomInstallerScript
 {
@@ -24,7 +24,7 @@ class plgsystemjdomInstallerScript
 	{
 		$this->old_params = self::getStoredParams();
 	}
- 
+
 	/**
 	* Called before any type of action
 	*
@@ -37,7 +37,7 @@ class plgsystemjdomInstallerScript
 	{
 
 	}
- 
+
 	/**
 	* Called after any type of action
 	*
@@ -49,7 +49,7 @@ class plgsystemjdomInstallerScript
 	public function postflight($route, JAdapterInstance $adapter)
 	{
 		$app = JFactory::getApplication();
-		
+
 		$install_jdom = false;
 		$remove_jdom = false;
 		$manifest = $adapter->get('manifest');
@@ -61,34 +61,34 @@ class plgsystemjdomInstallerScript
 		if (!$paths)
 			$paths = $parent->get('_paths'); //Legacy 2.5
 
-				
+
 		$src = $paths['source'] . DS . 'jdom';
 		$dest = JPATH_SITE . DS . 'libraries' . DS . 'jdom';
-		
+
 		$params = array();
 		$params['update'] = '1';
-		
+
 		switch($route){
 			case 'install':
 				$params = array();
 				$params['update'] = '1';
 				$params['jdomversion'] = $manifest->jdomversion;
-				
+
 				// clean installation
 				$install_jdom = true;
-				
+
 				// enable plugin
 				self::enablePlugin();
 			break;
-			
+
 			case 'uninstall':
 				// remove the jdom library folder
 				$remove_jdom = true;
 			break;
-			
+
 			case 'update':
 				switch(intVal($old_params['update'])){
-					case 0:						
+					case 0:
 					break;
 
 					case 2:
@@ -96,12 +96,12 @@ class plgsystemjdomInstallerScript
 						if( $vers_compare > 0) {
 							// clean update jdom folder
 							$remove_jdom = true;
-							$install_jdom = true;								
+							$install_jdom = true;
 						} elseif($vers_compare < 0){
-							$params['jdomversion'] = $old_params['jdomversion'];							
+							$params['jdomversion'] = $old_params['jdomversion'];
 						}
 					break;
-					
+
 
 					case 1:
 					default:
@@ -109,15 +109,15 @@ class plgsystemjdomInstallerScript
 						$remove_jdom = true;
 						$install_jdom = true;
 						$params['jdomversion'] = $manifest->jdomversion;
-					break;						
+					break;
 				}
 
 			break;
-			
+
 			default:
 			break;
 		}
-		
+
 		// remove JDOM
 		if($remove_jdom and file_exists($dest)){
 			if(JFolder::delete($dest)){
@@ -126,7 +126,7 @@ class plgsystemjdomInstallerScript
 				$app->enqueueMessage(JText::_("PLG_JDOM_ERROR_REMOVED"), 'error');
 			}
 		}
-		
+
 		// install JDOM
 		if($install_jdom){
 			if(JFolder::copy($src, $dest, '', true)){
@@ -137,7 +137,7 @@ class plgsystemjdomInstallerScript
 			}
 		}
 	}
- 
+
 	/**
 	* Called on installation
 	*
@@ -147,9 +147,9 @@ class plgsystemjdomInstallerScript
 	*/
 	public function install(JAdapterInstance $adapter)
 	{
-	
+
 	}
- 
+
 	/**
 	* Called on update
 	*
@@ -159,9 +159,9 @@ class plgsystemjdomInstallerScript
 	*/
 	public function update(JAdapterInstance $adapter)
 	{
-		
+
 	}
- 
+
 	/**
 	* Called on uninstallation
 	*
@@ -172,7 +172,7 @@ class plgsystemjdomInstallerScript
 		// We want to call postflight after uninstall
 		self::postflight('uninstall', $adapter);
 	}
-	
+
 
 	/**
 	* Get the manifest cache.
@@ -186,7 +186,7 @@ class plgsystemjdomInstallerScript
 		$manifest = json_decode( $db->loadResult(), true );
 		return $manifest;
 	}
-	
+
 
 	/**
 	* Get the component params.
@@ -205,15 +205,15 @@ class plgsystemjdomInstallerScript
 	* Enable the plugin.
 	*
 	* @param   string  $extension  The extension alias in #__extensions table
-	*/	
+	*/
 	function enablePlugin($extension = 'jdom')
 	{
 		$db = JFactory::getDbo();
-		
+
 		$db->setQuery('UPDATE #__extensions SET enabled = 1 WHERE type="plugin" AND element = "'. $extension .'"' );
 		$db->query();
 	}
-	
+
 	/**
 	* Sets parameter values in the extension's row of the extension table.
 	*
@@ -226,16 +226,16 @@ class plgsystemjdomInstallerScript
 		if ( count($param_array) <= 0 ) {
 			return;
 		}
-		
+
 		// read the existing component value(s)
 		$db = JFactory::getDbo();
-		
+
 		$params = self::getStoredParams();
 		// add the new variable(s) to the existing one(s)
 		foreach ( $param_array as $name => $value ) {
 			$params[ (string) $name ] = (string) $value;
 		}
-		
+
 		if($newInstall){
 			// store the new values as a JSON string
 			$paramsString = json_encode( $param_array );

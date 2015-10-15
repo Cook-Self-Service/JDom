@@ -173,7 +173,7 @@ class JDomHtmlLink extends JDomHtml
 			'TITLE' 	=> ($this->link_title?" title=\"".htmlspecialchars($this->link_title)."\"":""),
 			'HREF' 		=> ($this->href?" href=\"" .htmlspecialchars($this->href) . "\"":""),
 			'JS' 		=> ($this->link_js?" onclick=\"" .htmlspecialchars($this->link_js) . "\"":""),
-			'TARGET' 	=> ($this->target?" target='" . $this->target . "'":""),
+			'TARGET' 	=> ($this->target && ($this->target != 'download')?" target='" . $this->target . "'":""),
 			'SELECTORS'	=> $this->buildSelectors(),
 			'CLASS'		=> $this->buildDomClass(),
 			'STYLE'		=> $this->buildDomStyles(),

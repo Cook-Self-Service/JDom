@@ -65,10 +65,14 @@ class JDomHtmlFormInputFile extends JDomHtmlFormInput
 
 		$this->arg('cid'		, null, $args);
 		$this->arg('view'		, null, $args);
-		
-		$this->arg('actions'		, null, $args);
+
+		$this->arg('actions'		, null, $args, array());
 
 		$this->thumb = ($this->width || $this->height);
+
+
+		if (is_string($this->actions))
+			$this->actions = explode('|', $this->actions);
 
 	}
 
@@ -77,12 +81,12 @@ class JDomHtmlFormInputFile extends JDomHtmlFormInput
 	{
 		if (!isset($this->actions) || empty($this->actions))
 			return;
-		
+
 		$list = array();
 
 		$list[] = array('value' => '', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_KEEP"), 'icon' => 'icomoon-cancel');
 
-		
+
 		if (in_array('remove', $this->actions))
 			$list[] = array('value' => 'remove', 'text' => $this->JText("PLG_JDOM_FILE_REMOVE_EJECT"), 'icon' => 'icomoon-out');
 
@@ -97,5 +101,5 @@ class JDomHtmlFormInputFile extends JDomHtmlFormInput
 
 		return $list;
 	}
-	
+
 }
