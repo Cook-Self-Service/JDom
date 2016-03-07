@@ -45,7 +45,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 
 		$this->arg('dateFormat'	, null, $args, "Y-m-d");
 		$this->arg('filter'		, null, $args);  // Deprecated : use timezone
-		$this->arg('timezone' , null, $args);
+		$this->arg('timezone' , null, $args, 'USER_UTC');
 
 		if (!empty($this->filter) && empty($this->timezone))
 			$this->timezone = $this->filter;

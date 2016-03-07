@@ -43,7 +43,7 @@ class JDomHtmlFlyDatetime extends JDomHtmlFly
 
 		parent::__construct($args);
 		$this->arg('dateFormat' , null, $args, "Y-m-d");
-		$this->arg('timezone' , null, $args);
+		$this->arg('timezone' , null, $args, 'USER_UTC');
 
 	//JDate::toFormat() is deprecated. CONVERT Legacy Joomla Format
 		//Minutes : ‰M > i
