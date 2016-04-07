@@ -34,6 +34,8 @@ class JDomHtmlLink extends JDomHtml
 	protected $target; // Can be also 'modal'
 	protected $handler; // Can be 'iframe'
 	protected $alertConfirm;
+	protected $modalWidth;
+	protected $modalHeight;
 
 
 	/*
@@ -75,6 +77,8 @@ class JDomHtmlLink extends JDomHtml
 		$this->arg('handler'		, null, $args, 'iframe');
 		$this->arg('domClass'		, null, $args);
 		$this->arg('alertConfirm'	, null, $args);
+		$this->arg('modalWidth'	, null, $args);
+		$this->arg('modalHeight'	, null, $args);
 
 	}
 
@@ -139,15 +143,30 @@ class JDomHtmlLink extends JDomHtml
 		$rel = "{";
 		$rel.= "handler: '" . ($this->handler?$this->handler:'') . "'";
 
-		if ($this->modalWidth && $this->modalHeight)
+
+		$relX = $relY = null;
+		if ($this->modalWidth)
 		{
 			$w = (int)$this->modalWidth;
-			$h = (int)$this->modalHeight;
-
-			$rel .=	", size: {x: " . ($w?$w:"null")
-						. 	", y: " . ($h?$h:"null")
-						. "}";
+			$relX = "x: " . ($w?$w:"null");
 		}
+
+		if ($this->modalHeight)
+		{
+			$h = (int)$this->modalHeight;
+			$relY = "y: " . ($h?$h:"null");
+		}
+
+
+		if ($relX || $relY)
+		{
+			$rel .=	", size: {"
+					.	($relX?$relX . ' ,':'')
+					. 	($relY?$relY:'')
+					. "}";
+		}
+
+
 		if ($this->modalScrolling)
 		{
 			$options = array("auto", "no", "yes");
