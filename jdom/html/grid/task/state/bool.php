@@ -22,14 +22,21 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlGridTaskStateBool extends JDomHtmlGridTaskState
 {
-	
+
 	protected $taskYes;
 	protected $taskNo;
 
 	protected $strUndefined;
 	protected $strNO;
 	protected $strYES;
-	
+
+	// Customize the icons here
+	protected $icons = array(
+		'' => 'question-sign',	// question-sign | warning
+		0 => 'unpublish',	// unpublish | cancel
+		1 => 'publish'		// publish | ok
+	);
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -55,48 +62,49 @@ class JDomHtmlGridTaskStateBool extends JDomHtmlGridTaskState
 	 *	@strNO			: text to show when value is no
 	 *	@strUndefined	: text to show when value is undefined
 	 */
-	 
-	 
+
+
 	function __construct($args)
 	{
 		parent::__construct($args);
 
-
 		$this->arg('taskYes'			, null, $args);
 		$this->arg('taskNo'				, null, $args, $this->taskYes);
-	
+
 		$this->arg('strUndefined'		, null, $args, '');
 		$this->arg('strNO'				, null, $args, 'JNO');
 		$this->arg('strYES'				, null, $args, 'JYES');
-		
-				
-		// TODO : You can customize the behaviors icons and strings here
-		$this->states	= array(
 
-			// When value = 1
-			1	=> array(
-			
-				$this->taskYes,	// Task to execute
-				$this->strYES,	// Text
-				$this->strYES,	// Tooltip description when boolean is enabled
-				$this->strYES,	// Tooltip description when boolean is disabled
-				$this->tooltip,	// Show tooltip ?
-				'publish',		// Css class when active (enabled)
-				'publish'),		// Css class when inactive (disabled)
-				
-			// When value = 0 (see before)			
-			0	=> array($this->taskNo,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	'unpublish',	'unpublish'),
-			''	=> array($this->taskNo,		$this->strUndefined,	$this->strUndefined,	$this->strUndefined,	$this->tooltip,	'warning',	'warning'),
-		);
-		
-		
+
+		// You can customize the behaviors icons and strings here, or in the caller
+		if (empty($this->states))
+		{
+			$icons = $this->icons;
+
+			$this->states	= array(
+				''	=> array($this->taskNo,		$this->strUndefined,	$this->strUndefined,	$this->strUndefined,	$this->tooltip,	$icons[''],	$icons['']),
+				0	=> array($this->taskNo,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	$icons[0],	$icons[0]),
+				1	=> array(
+					$this->taskYes,	// Task to execute
+					$this->strYES,	// Text
+					$this->strYES,	// Tooltip description when boolean is enabled
+					$this->strYES,	// Tooltip description when boolean is disabled
+					$this->tooltip,	// Show tooltip ?
+					$icons[1],		// Css class when active (enabled)
+					$icons[1]),		// Css class when inactive (disabled)
+
+			);
+		}
+
+
+
 	}
-	
+
 	function build()
 	{
-		$html = $this->buildHtml();
+		$html = $this->state();
 		return $html;
 	}
-	
+
 
 }

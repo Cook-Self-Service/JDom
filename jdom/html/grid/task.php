@@ -64,7 +64,7 @@ class JDomHtmlGridTask extends JDomHtmlGrid
 
 		$this->arg('commandAcl'		, null, $args);
 		$this->arg('enabled'		, null, $args, true);
-		$this->arg('tooltip'		, null, $args);
+		$this->arg('tooltip'		, null, $args, true);
 		$this->arg('ctrl'			, null, $args);
 		$this->arg('task'			, null, $args);
 		$this->arg('taskIcon'		, null, $args);
@@ -88,23 +88,23 @@ class JDomHtmlGridTask extends JDomHtmlGrid
 
 		if (!$this->enabled)
 			$this->tooltip = false;
-		
+
 		$this->getIconName();
-		
+
 	}
 
 	function getIconName()
-	{	
+	{
 		if (empty($this->taskIcon)){
 			$this->taskIcon = $this->getTaskExec();
 		}
-		
+
 		$name = $this->taskIcon;
 		$this->taskIcon = $name . ' ' . $this->iconLibrary;
 
 		return $name;
 	}
-	
+
 
 	function getTaskExec($ctrl = false)
 	{

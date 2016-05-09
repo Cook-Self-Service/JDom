@@ -27,6 +27,14 @@ class JDomHtmlGridTaskStateDefault extends JDomHtmlGridTaskState
 	protected $strNO;
 	protected $strYES;
 
+	// Customize the icons here
+	protected $icons = array(
+		'' => 'star-empty',	// question | question-sign | warning | star-empty
+		0 => 'star-empty',	// star-empty | notdefault (J!2.5)
+		1 => 'star'			// star | default (J!2.5)
+	);
+
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -57,23 +65,28 @@ class JDomHtmlGridTaskStateDefault extends JDomHtmlGridTaskState
 		parent::__construct($args);
 
 		$this->arg('task'				, null, $args, 'default');
-	
+
 		$this->arg('strNO'				, null, $args);
 		$this->arg('strYES'				, null, $args);
-		
+
+
+		// Joomla legacy 2.5
+		if (!$this->jVersion('3.0'))
+		{
+			$this->icons[0] = 'notdefault';
+			$this->icons[1] = 'default';
+		}
+
+
 		if ((bool)$this->dataValue)
 			$this->enabled = false;
-		
+
 		if (!$this->enabled)
 			$this->tooltip = false;
-		
+
 		$this->taskYes = null;
-		
-		$lib = ' ' . $this->iconLibrary;
-		$icons = array(0=> 'star-empty'. $lib, 1=> 'star'. $lib);
-		if (!$this->jVersion('3.0'))
-			$icons = array(0=> 'notdefault'. $lib, 1=> 'default'. $lib);
-	
+
+
 		if ($this->togglable)
 		{
 			if (empty($this->strYES))
@@ -82,41 +95,42 @@ class JDomHtmlGridTaskStateDefault extends JDomHtmlGridTaskState
 			if (empty($this->strNO))
 				$this->strNO = 'JDEFAULT';
 		}
-		
-		
+
 		//Add the descriptions in the tooltip. Same description is used for each state
 		if (!empty($this->strYES))
 			$this->strYES = JText::_($this->strYES) . '::' . $this->description;
-	
+
 		if (!empty($this->strNO))
 			$this->strNO = JText::_($this->strNO) . '::' . $this->description;
-		
-		
-		// TODO : You can eventually customize your behaviors icons and strings here
-		$this->states	= array(
 
-			// When value = 1
-			1	=> array(
-			
-				null,	// Task to execute
-				$this->strYES,	// Text
-				$this->strYES,	// Tooltip description when boolean is enabled
-				$this->strYES,	// Tooltip description when boolean is disabled
-				$this->tooltip,	// Show tooltip ?
-				$icons[1],		// Css class when active (enabled)
-				$icons[1]),		// Css class when inactive (disabled)
-				
-			// When value = 0 (see before)			
-			0	=> array($this->task,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	$icons[0],	$icons[0]),
-			''	=> array($this->task,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	$icons[0],	$icons[0]),
-		);
-		
-		
+
+		// You can customize the behaviors icons and strings here, or in the caller
+		if (empty($this->states))
+		{
+			$icons = $this->icons;
+			$lib = ' ' . $this->iconLibrary;
+
+			$this->states	= array(
+				''	=> array($this->task,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	$icons['']. $lib,	$icons['']. $lib),
+				0	=> array($this->task,		$this->strNO,	$this->strNO,	$this->strNO,	$this->tooltip,	$icons[0]. $lib,	$icons[0]. $lib),
+				1	=> array(
+					null,					// Task to execute
+					$this->strYES,			// Text
+					$this->strYES,			// Tooltip description when boolean is enabled
+					$this->strYES,			// Tooltip description when boolean is disabled
+					$this->tooltip,			// Show tooltip ?
+					$icons[1]. $lib,		// Css class when active (enabled)
+					$icons[1]. $lib			// Css class when inactive (disabled)
+				)
+
+			);
+		}
+
 	}
-	
+
 	function build()
 	{
-		$html = $this->buildHtml();
+		$html = $this->state();
 		return $html;
 	}
 }

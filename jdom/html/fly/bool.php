@@ -25,6 +25,12 @@ class JDomHtmlFlyBool extends JDomHtmlFly
 	protected $text;
 	protected $icon;
 
+	// Customize the icons here
+	protected $icons = array(
+		'' => 'question-sign', 	// question-sign | warning
+		0 => 'unpublish', 		// unpublish | cancel
+		1 => 'publish' 			// publish | ok
+	);
 
 	/*
 	 * Constuctor
@@ -42,29 +48,37 @@ class JDomHtmlFlyBool extends JDomHtmlFly
 		parent::__construct($args);
 
 		$this->arg('viewType'	, null, $args);
-		
+
+		$icons = $this->icons;
+
 		$states = array(
-			'' => array('icomoon-question-sign', 'PLG_JDOM_UNDEFINED', 'both', 'default'),
-			1 => array('icomoon-ok', 'JYES', 'both', 'success'),
-			0 => array('icomoon-cancel', 'JNO', 'both', 'danger'));
-			
+			'' => array($icons[''], 'PLG_JDOM_UNDEFINED', 'both', 'default'),
+			0 => array($icons[0], 'JNO', 'both', 'danger'),
+			1 => array(
+				$icons[1], 	// Icon
+				'JYES', 	// Label
+				'both', 	// Display (icon | text | both)
+				'success'	// Color (bootstrap framework)
+			)
+		);
+
 		if ($this->dataValue === null)
 			$this->dataValue = '';
-		
+
 		$state = $states[$this->dataValue];
 		$this->icon = $state[0];
 		$this->text = $this->JText($state[1]);
 		if (empty($this->viewType))
 			$this->viewType = $state[2];
-		
+
 		$this->color = $state[3];
-		
+
 	}
 
 	function build()
 	{
 		$html = '';
-		
+
 		//Icon alone
 		if ($this->viewType == 'icon')
 		{
@@ -74,18 +88,18 @@ class JDomHtmlFlyBool extends JDomHtmlFly
 				'title' => $this->text,
 				'color' => $this->color
 			));
-			
+
 			return $html;
 		}
-		
-		
+
+
 		//Icon
 		if ($this->viewType == 'both')
 		{
 			$html .= JDom::_('html.icon', array(
 				'icon' => $this->icon,
 			));
-						
+
 		}
 
 		$html .= $this->text;
@@ -93,7 +107,7 @@ class JDomHtmlFlyBool extends JDomHtmlFly
 		//Embed in label
 		$html = JDom::_('html.label', array(
 			'content' => $html,
-			'color' => $this->color		
+			'color' => $this->color
 		));
 
 		return $html;
