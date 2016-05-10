@@ -43,7 +43,7 @@ class JDomHtmlFormInputClock extends JDomHtmlFormInput
 	{
 		parent::__construct($args);
 
-		$this->arg('timeFormat'		, null, $args, "%H:%M");
+		$this->arg('timeFormat'		, null, $args, "H:i");
 		$this->arg('timezone' , null, $args);
 
 
@@ -90,17 +90,20 @@ array(	'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}'
 
 			$formatedTime = $date->format($this->timeFormat, !empty($this->timezone));
 
-
-
 		}
 		else
 			$formatedTime = "";
 
 
-		$html = JDom::_('html.form.input.text', array_merge($this->options, array(
-												'dataValue' => $formatedTime,
-												'size' => 6,
-												)));
+		$html =	'<input type="time" id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+			.	' value="' . $formatedTime . '"'
+			.	' size="6"'
+			.	'/>' .LN
+			.	'<%VALIDOR_ICON%>'.LN
+			.	'<%MESSAGE%>';
+
+		return $html;
+
 
 		return $html;
 	}
