@@ -35,7 +35,7 @@ class JDomHtmlFormInputSelect extends JDomHtmlFormInput
 	protected $nullLabel;
 	protected $size;
 	protected $groupBy;
-
+	protected $applyAccess;
 
 	/*
 	 * Constuctor
@@ -55,6 +55,7 @@ class JDomHtmlFormInputSelect extends JDomHtmlFormInput
 	 * 	@groupBy	: Group values on key(s)  (Complex Array Struct)
 	 * 	@domClass	: CSS class
 	 * 	@selectors	: raw selectors (Array) ie: javascript events
+	 * 	@applyAccess: Limit the items to their access, even for admin user with privileges
 	 */
 	function __construct($args)
 	{
@@ -70,12 +71,12 @@ class JDomHtmlFormInputSelect extends JDomHtmlFormInput
 		$this->arg('groupBy'	, null, $args);
 		$this->arg('domClass'	, null, $args);
 		$this->arg('selectors'	, null, $args);
+		$this->arg('applyAccess'	, null, $args);
 
 		//Reformate items
-		
-		$newArray = array();
 		if (count($this->list))
 		{
+			$newArray = array();
 			$a = array_keys($this->list);
 			if ($a == array_keys($a))//Not associative
 			{
@@ -83,39 +84,63 @@ class JDomHtmlFormInputSelect extends JDomHtmlFormInput
 				foreach($this->list as $item)
 				{
 					if (is_array($item))
-					{
-						$newItem = new stdClass();
-						foreach($item as $key => $value)
-							$newItem->$key = $value;
-		
-						$newArray[$i] = $newItem;
-					}
+						$item = JArrayHelper::toObject($item);
+
+					if (!$this->checkAccess($item))
+						continue;
+
+					$newArray[$i] = $item;
 					$i++;
 				}
 			}
-			else 
+			else
 			{
-				
 				foreach($this->list as $key => $value)
 				{
 					if (is_string($value))
 					{
-				
 						$newItem = new stdClass();
 						$newItem->id = $key;
 						$newItem->text = $value;
-						
+
 						$newArray[] = $newItem;
 					}
-					
+
 				}
-				
+
 			}
 
-			
+			$this->list = $newArray;
 		}
 
-		if (count($newArray))
-			$this->list = $newArray;
+	}
+
+	/*
+	 * This function restrict the items depending on their access tag.
+	 * This is dangerous in case of a foreign key that have been populated with an 'unpublished' item, then it will diseapear.
+	 * So in that case, when the user edit that form and save, it can break that link.
+	 */
+	protected function checkAccess($item)
+	{
+		// Do not apply accesses
+		if (!$this->applyAccess)
+			return true;
+
+		// Item do not contains access tags
+		if (!isset($item->params))
+			return true;
+
+		$tags = $item->params;
+		if (is_object($tags))
+			$tags = JArrayHelper::fromObject($tags);
+
+
+		if (isset($tags['access-view']) && ($tags['access-view'] == 0))
+			return false;
+
+		if (isset($tags['tag-published']) && ($tags['tag-published'] == 0))
+			return false;
+
+		return true;
 	}
 }
