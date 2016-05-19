@@ -7,8 +7,8 @@
     <license>MIT License (MIT)</license>
     <authorEmail>support@j-cook.pro</authorEmail>
     <authorUrl>http://www.j-cook.pro</authorUrl>
-    <version>2.6.15</version>
-    <jdomversion>2.6.15</jdomversion>
+    <version>2.6.16</version>
+    <jdomversion>2.6.16</jdomversion>
     <description>JDom Library for Joomla.</description>
 
     <files>

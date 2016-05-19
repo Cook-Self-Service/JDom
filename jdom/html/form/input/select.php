@@ -105,6 +105,10 @@ class JDomHtmlFormInputSelect extends JDomHtmlFormInput
 
 						$newArray[] = $newItem;
 					}
+					else
+					{
+						$newArray[] = $value;
+					}
 
 				}
 
