@@ -422,18 +422,22 @@ class JDom extends JObject
 
 	public function getExtension()
 	{
+		// Check an extension override parameter
+		if ($extension = $this->getOption('extension'))
+			return $extension;
+
+		// Read the value from static stored cache (when loaded from a component)
 		$dom = JDom::getInstance();
 		if ($extension = $dom->get('extension'))
 			return $extension;
 
-		$extension = $this->getOption('extension');
-		if (!$extension)
-		{
-			$jinput = new JInput;
-			$extension = $jinput->get('option', null, 'CMD');
-		}
+		// Find automatically the extension (component) from the URL request
+		$jinput = new JInput;
+		$extension = $jinput->get('option', null, 'CMD');
 
-		$dom->set('extension', $extension);
+		// Store in cache for optimization
+		if ($extension)
+			$dom->set('extension', $extension);
 
 		return $extension;
 	}
@@ -1059,11 +1063,14 @@ array(	"\\", "\/", 	"\#",	"\!", 	"\^", "$", "\(", "\)", "\[", "\]", "\{", "\}", 
 
 		foreach($vars as $var)
 		{
-			if (isset($route[$var]))
+			// Take value from the params. Null is accepted in order to remove the parameter from the route
+			if (key_exists($var, $route))
 			{
-				if (!empty($route[$var]))
+				if ($route[$var] !== null)
 					$queryVars[$var] = $route[$var];
 			}
+
+			// Take value from the current page or request
 			else
 			{
 				$value = $jinput->get($var, null, 'STRING');

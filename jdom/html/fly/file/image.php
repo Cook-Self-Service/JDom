@@ -60,10 +60,10 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 		$this->arg('titleKey'	, null, $args);
 
 
-		if (!empty($this->altKey))	
+		if (!empty($this->altKey))
 			$this->alt = $this->parseKeys($this->dataObject, $this->altKey);
-			
-		if (!empty($this->titleKey))	
+
+		if (!empty($this->titleKey))
 			$this->title = $this->parseKeys($this->dataObject, $this->titleKey);
 	}
 
@@ -79,35 +79,40 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 		// Cannot show the image, only the file path
 		if ($this->indirect == 'physical')
 			return $thumbUrl;
-		
+
         $imgStyle = $this->getStyles();
-       
+
 	   	if (empty($thumbUrl))
 			return;
-		
+
+
+		$style = '';
+		if ($pos)
+		{
+			$style = ($pos->margin['top']?'margin-top:' . (int)$pos->margin['top'] . 'px;':'')
+            .       ($pos->margin['bottom']?'margin-bottom:' . (int)$pos->margin['bottom'] . 'px;':'')
+            .       ($pos->margin['left']?'margin-left:' . (int)$pos->margin['left'] . 'px;':'')
+            .       ($pos->margin['right']?'margin-right:' . (int)$pos->margin['right'] . 'px;':'');
+
+		}
 
         $html = '<img src="' . $thumbUrl . '"'
             .   ($this->title?' title="' . htmlspecialchars($this->title). '"':'')
             .   ($this->alt?' alt="' . htmlspecialchars($this->alt). '"':'')
-            .   ' style="'
-            .       ($pos->margin['top']?'margin-top:' . (int)$pos->margin['top'] . 'px;':'')
-            .       ($pos->margin['bottom']?'margin-bottom:' . (int)$pos->margin['bottom'] . 'px;':'')
-            .       ($pos->margin['left']?'margin-left:' . (int)$pos->margin['left'] . 'px;':'')
-            .       ($pos->margin['right']?'margin-right:' . (int)$pos->margin['right'] . 'px;':'')
-            .   '"'
-            .   ($pos->width?' width="' . (int)$pos->width . 'px" ':'')
-            .   ($pos->height?' height="' . (int)$pos->height . 'px" ':'')
+            .   (!empty($style)?' style="' . $style . '"':'')
+            .   ($pos && $pos->width?' width="' . (int)$pos->width . 'px" ':'')
+            .   ($pos && $pos->height?' height="' . (int)$pos->height . 'px" ':'')
             .   '/>';
 
-            
-		if ($this->frame && $pos->wrapWidth && $pos->wrapHeight)
+
+		if ($pos && $this->frame && $pos->wrapWidth && $pos->wrapHeight)
 		{
 			$html = "\n" . '<div class="img-zone" style="width:' . $pos->wrapWidth . 'px;height:' . $pos->wrapHeight . 'px; overflow:hidden;'
             .   'display:inline-block;' . $imgStyle . '"'
             .   '>'
-            
+
             . $html
-            
+
 			. '</div>';
 		}
 
@@ -119,8 +124,8 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 	{
 		if (!$this->dataValue)
 			return;
-		
-		$helperClass = $this->getComponentHelper();		
+
+		$helperClass = $this->getComponentHelper();
 		if (!$helperClass)
 			return;
 
@@ -130,9 +135,12 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 			'height' => $this->height,
 			'attrs' => $this->attrs
 		);
-			
+
+		if (!method_exists($helperClass, 'getImageInfos'))
+			return null;
+
 		if (!$infos = $helperClass::getImageInfos($path, $options))
-			return;
+			return null;
 
 		$margin = array(
 			'top' => 0,
@@ -160,7 +168,7 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 			$w = $info->imagesize->width;
 			$h = $info->imagesize->height;
 
-		
+
 			if ($this->attrs && in_array('center', $this->attrs))
 			{
 				if ($info->w != $info->widthCanvas)

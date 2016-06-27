@@ -23,7 +23,7 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 {
 	var $fallback = 'default';		//Used for default
 
-	
+
 
 	protected $indirect;
 	protected $width;
@@ -34,7 +34,7 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 	protected $view;
 	protected $cid;
 	protected $listKey;
-	
+
 	protected $thumb;
 
 	/*
@@ -49,7 +49,7 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 	 *	@width		: Thumb width
 	 *	@height		: Thumb height
 	 *	@attrs		: File attributes ('crop', 'fit', 'center', 'quality')
-	 * 
+	 *
 	 *	@indirect	: Indirect File access
 	 * 		indirect : access through controler to decode path
 	 * 		direct 	: access through direct URL
@@ -88,31 +88,33 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 
 	function getFileUrl($thumb = false, $link = false)
 	{
-		$helperClass = $this->getComponentHelper();		
+		$helperClass = $this->getComponentHelper();
 		if (!$helperClass)
 			return;
 
 		if (($this->indirect != 'index') && empty($this->dataValue))
 			return;
-		
-		if (empty($path))
-			$path = $this->root .DS. $this->dataValue;
 
+		$path = $this->dataValue;
+
+		// Add the root alias directory ONLY when missing in the path
+		if (!preg_match("/^\[[A-Z_0-9]+\]/", $path))
+			$path = ($this->root?$this->root . '/':'') . $path;
 
 		// $link = false when creating the image thumb. 'download' not allowed in this case.
-		// Then, pass a second time to eventually create the download URL	
+		// Then, pass a second time to eventually create the download URL
 		$options = array();
 		if ($thumb)
 			$options = array(
 				'width' => $this->width,
 				'height' => $this->height,
-				'attrs' => $this->attrs,			
+				'attrs' => $this->attrs,
 			);
 		else if ($link)
 		{
 			$options = array(
 				'download' => ($this->target == 'download')
-			
+
 			);
 		}
 
@@ -121,19 +123,19 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 			case 'index':		// Indexed image url
 				if ((!$cid = $this->cid) && $this->dataObject && ($listKey = $this->listKey))
 					$cid = $this->dataObject->$listKey;
-					
+
 				$url = $helperClass::getIndexedFile($this->view, $this->dataKey, $cid, $options);
 				break;
-				
+
 			case 'indirect':	// Indirect file access
 			case 'physical':	// Physical file on the drive (url is a path here)
 			case 'direct':		// Direct url
 			default:
 				$url = $helperClass::getFile($path, $this->indirect, $options);
 				break;
-		}	
-		
-			
+		}
+
+
 		/* Uncomment to see the returned url */
 		//echo('<pre>');print_r($url);echo('</pre>');
 
