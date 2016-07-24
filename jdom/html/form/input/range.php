@@ -22,9 +22,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInputRange extends JDomHtmlFormInput
 {
-	var $level = 4;			//Namespace position
-	var $last = true;		//This class is last call
-
 	var $rangeNameSpace;
 	var $dataValueFrom;
 	var $dataValueTo;
@@ -84,8 +81,7 @@ class JDomHtmlFormInputRange extends JDomHtmlFormInput
 										)));
 
 
-
-		$html =	"";
+		$html =	"<%PREFIX%>";
 
 
 //FROM
@@ -101,6 +97,8 @@ class JDomHtmlFormInputRange extends JDomHtmlFormInput
 		$html .= $jDomTo;
 		$html .= ($hz?'</div>' . "\n":'');
 
+
+		$html .=	"<%SUFFIX%>";
 
 		return $html;
 	}

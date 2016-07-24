@@ -54,7 +54,7 @@ class JDomHtmlFormInputColorpicker extends JDomHtmlFormInput
 
 		$dom->addClass('input-mini');
 		$htmlInput = $dom->output();
-		
+
 		//Create the color
 		$htmlColor = JDom::_('html.fly.color', array_merge($this->options, array(
 			'width' => 12,
@@ -63,7 +63,7 @@ class JDomHtmlFormInputColorpicker extends JDomHtmlFormInput
 				'id' => $id . '-pick'
 			)
 		)));
-		
+
 		//Create the icon
 		$htmlIcon = JDom::_('html.icon', array(
 			'icon' => 'glyphicon-tint',
@@ -76,33 +76,34 @@ class JDomHtmlFormInputColorpicker extends JDomHtmlFormInput
 			'domId' => $id . '-btn',
 		));
 
-		$html = '';
+		$html = '<%PREFIX%>';
 
 		//Render the control
 		if ($this->hidden)
 			$html .= $htmlInput .LN; //Place the hidden input out of the control
 
-			
-		$html .= '<div class="btn-group">' .LN;					
+
+		$html .= '<div class="btn-group">' .LN;
 		$html .= '<div class="input-prepend input-append">' .LN;
-			
+
 		if (!$this->hidden)
 		{
 			//Prepend
 			$html .= '<span class="add-on">#</span>';
-			
+
 			//Input mini
-			$html .= $htmlInput .LN;	
+			$html .= $htmlInput .LN;
 		}
-			
+
 		//Append
 		$html .= '<span class="add-on">' . $htmlColor . '</span>' .LN;
 		$html .= $htmlButton .LN;
-		
-		//Close the control		
+
+		//Close the control
 		$html .= '</div>' .LN;
 		$html .= '</div>' .LN;
-		
+
+		$html .= '<%SUFFIX%>';
 
 		return $html;
 

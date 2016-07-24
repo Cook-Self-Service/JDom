@@ -102,6 +102,7 @@ class JDomHtmlLink extends JDomHtml
 		if ($this->tooltip)
 			$this->addClass('hasTooltip hasTip');
 
+
 		$html = "<a<%ID%><%CLASS%><%STYLE%><%TITLE%><%HREF%><%JS%><%TARGET%><%SELECTORS%>>"
 			.	$this->content
 			.	"</a>";

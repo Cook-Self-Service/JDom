@@ -27,7 +27,7 @@ class JDomHtmlFormInputSearch extends JDomHtmlFormInput
 	var $attachJs = array(
 		'joomla.js'
 	);
-	
+
 	var $size;
 	var $label;
 
@@ -59,38 +59,38 @@ class JDomHtmlFormInputSearch extends JDomHtmlFormInput
 			'placeholder' => $this->label,
 			'title' => $this->label,
 		)));
-		
-		
-		$html = '<div class=" form-search btn-group">';
-		
+
+
+		$html = '<%PREFIX%><div class=" form-search btn-group">';
+
 			//Button group
 			$html .= '<div class="input-append">';
-	
+
 				$html .= $htmlInput;
-				
+
 				//Search Button
 				$html .= JDom::_('html.link.button.icon', array(
 					'icon' => 'search',
 					'link_title' => JText::_('JSEARCH_FILTER_SUBMIT'),
 					'submitEventName' => 'onclick',
 				));
-						
+
 
 			//Clear Button
-						
+
 				$html .= JDom::_('html.link.button.icon', array(
 					'icon' => 'remove',
 					'link_title' => JText::_('JSEARCH_FILTER_CLEAR'),
 					'link_js' => 'Joomla.resetFilters();',
 					'domClass' => ''
 				));
-			
+
 			$html .= '</div>';
-		
-		$html .= '</div>';
+
+		$html .= '</div><%SUFFIX%>';
 
 		return $html;
 	}
-	
+
 
 }

@@ -62,7 +62,7 @@ class JDomHtmlFormInputTextarea extends JDomHtmlFormInput
 
 	function build()
 	{
-		
+
 		if (!empty($this->width))
 		{
 			$this->cols = null;
@@ -74,14 +74,14 @@ class JDomHtmlFormInputTextarea extends JDomHtmlFormInput
 			$this->rows = null;
 			$this->addStyle('height', $this->height);
 		}
-		
-					
-		$html =	'<textarea id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+
+
+		$html =	'<%PREFIX%><textarea id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
 			.	($this->cols?' cols="' . $this->cols . '"':'')
 			.	($this->rows?' rows="' . $this->rows . '"':'')
 			.	'>'
 			.	'<%VALUE%>'
-			.	'</textarea>' .LN
+			.	'</textarea><%SUFFIX%>' .LN
 			.	'<%VALIDOR_ICON%>'.LN
 			.	'<%MESSAGE%>';
 

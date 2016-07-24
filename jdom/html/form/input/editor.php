@@ -70,9 +70,9 @@ class JDomHtmlFormInputEditor extends JDomHtmlFormInput
 		$editor->set( 'toolbar', 'Default' );
 
 
-		$html .= '<div class="form-widget">';
+		$html .= '<%PREFIX%><div class="form-widget">';
 		$html .= $editor->display($this->getInputName(), $this->dataValue, $this->width, $this->height, $this->cols, $this->rows, false);
-		$html .= '</div>';
+		$html .= '</div><%SUFFIX%>';
 
 		return $html;
 	}

@@ -21,7 +21,6 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFormInput extends JDomHtmlForm
 {
-	var $level = 3;				//Namespace position
 	var $fallback = 'text';		//Used for default
 
 	protected $dataKey;
@@ -45,6 +44,9 @@ class JDomHtmlFormInput extends JDomHtmlForm
 	protected $title;
 	protected $placeholder;
 	protected $type;
+	protected $prefix;
+	protected $suffix;
+
 
 	/*
 	 * Constuctor
@@ -70,6 +72,8 @@ class JDomHtmlFormInput extends JDomHtmlForm
 	 *  @validatorMsgRequired 	: Required error message
 	 *  @placeholder			: Placeholder
 	 *  @type					: Input type (default: 'text') can be 'file'
+	 *  @prefix					: Input prefix
+	 *  @suffix					: Input suffix
 	 *
 	 */
 	function __construct($args)
@@ -94,11 +98,11 @@ class JDomHtmlFormInput extends JDomHtmlForm
 		$this->arg('validatorMsgRequired' 	, null, $args, "PLG_JDOM_VALIDATOR_REQUIRED");
 		$this->arg('placeholder' 			, null, $args);
 		$this->arg('title' 			, null, $args);
-		
 		$this->arg('hidden' 		, null, $args);
 		$this->arg('type' 			, null, $args, 'text');
-		
-		
+		$this->arg('prefix' 			, null, $args);
+		$this->arg('suffix' 			, null, $args);
+
 
 		if (isset($this->dateFormat))
 		{
@@ -129,10 +133,10 @@ class JDomHtmlFormInput extends JDomHtmlForm
 
 		if ($this->placeholder)
 			$this->addSelector('placeholder', $this->JText($this->placeholder));
-	
+
 		if ($this->title)
 			$this->addSelector('title', $this->title);
-		
+
 	}
 
 	function addValidatorHandler($regex= null, $handler = null)
@@ -144,7 +148,7 @@ class JDomHtmlFormInput extends JDomHtmlForm
 			return;
 
 		$script = 'jQuery.validationEngineLanguage.allRules.' . $this->validatorHandler . ' = ' . $jsRule .';';
-		
+
 		$doc = JFactory::getDocument();
 		$doc->addScriptDeclaration($script);
 	}
@@ -167,7 +171,7 @@ class JDomHtmlFormInput extends JDomHtmlForm
 	//DEPRECATED
 	function buildValidatorIcon()
 	{
-		
+
 	}
 
 	protected function parseVars($vars)
@@ -183,17 +187,19 @@ class JDomHtmlFormInput extends JDomHtmlForm
 			'MESSAGE' 		=> $this->buildValidatorMessage(),
 			'VALIDOR_ICON' 	=> $this->buildValidatorIcon(),
 			'JSON_REL' 		=> htmlspecialchars($this->jsonArgs(), ENT_COMPAT, 'UTF-8'),
+			'PREFIX'		=> $this->prefix,
+			'SUFFIX'		=> $this->suffix,
 		), $vars));
 	}
 
 	protected function getInputValue()
 	{
 		$value = $this->dataValue;
-		
+
 		// Integers optimization.
 		if (is_int($value))
 			return $value;
-				
+
 		// Protect the string
 		if (is_string($value))
 			return  htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
@@ -204,22 +210,22 @@ class JDomHtmlFormInput extends JDomHtmlForm
 			//Empty array
 			if (!count($value))
 				return '';
-			
+
 			// Simple array of integer
 			if (is_int($value[0]))
 				return implode(',', $value);
-			
+
 			// Other type of array : Not handled in value markup property
 			return '';
 		}
-		
+
 		// JSon an object
 		if (is_object($value))
 			return json_encode($value);
-	
+
 		return '';
 	}
-	
+
 	function getInputName($suffix = null)
 	{
 		$name = $dataKey = $this->dataKey;
@@ -237,17 +243,17 @@ class JDomHtmlFormInput extends JDomHtmlForm
 				$name = "[" . $name . "]";
 				if (!empty($this->formGroup))
 					$name = '[' . implode('][', explode('.', $this->formGroup)) . ']' . $name;
-				
+
 				$name = $this->formControl . $name;
 			}
 		}
 
 		if ($this->domName)
 			$name = $this->domName;
-		
+
 		if ($suffix)
-			$name = str_replace($dataKey, $dataKey . '-' . $suffix, $name);			
-		
+			$name = str_replace($dataKey, $dataKey . '-' . $suffix, $name);
+
 		return $name;
 	}
 
@@ -257,20 +263,20 @@ class JDomHtmlFormInput extends JDomHtmlForm
 		$id = $this->dataKey;
 		if (!empty($this->formControl))
 		{
-			
+
 			if (!empty($this->formGroup))
 				$id = str_replace('.', '_', $this->formGroup)  .'_'. $id;
-			
+
 			$id = $this->formControl . '_' . $id;
-			
+
 		}
 
 		if ($this->domId)
 			$id = $this->domId;
-		
+
 		if ($suffix)
 			$id .= '-' . $suffix;
-		
+
 		return $id;
 	}
 

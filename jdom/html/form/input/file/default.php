@@ -53,9 +53,13 @@ class JDomHtmlFormInputFileDefault extends JDomHtmlFormInputFile
 	function build()
 	{
 		if ($this->useFramework('bootstrap'))
-			return $this->buildBootstrap();
+			$html = $this->buildBootstrap();
+		else
+			$html = $this->buildLegacy();
 
-		return $this->buildLegacy();
+		$html = "<%PREFIX%>" . $html . "<%SUFFIX%>";
+
+		return $html;
 	}
 
 	function buildBootstrap()

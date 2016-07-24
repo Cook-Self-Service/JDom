@@ -51,13 +51,13 @@ class JDomHtmlFormInputFileImagepicker extends JDomHtmlFormInputFile
 	function build()
 	{
 		$html = '';
-		
+
 		//Create the preview icon
 		$htmlIconPreview = JDom::_('html.icon', array(
 			'icon' => 'eye',
 		));
-		
-		//Create the preview	
+
+		//Create the preview
 		$pickerStyle = "";
 		if ($this->thumb)
 			$pickerStyle = 'border:dashed 3px #ccc; padding:5px; margin:5px;display:inline-block';
@@ -71,21 +71,21 @@ class JDomHtmlFormInputFileImagepicker extends JDomHtmlFormInputFile
 		$htmlPreview .= '<div class="clearfix"></div>';
 
 		$removeList = $this->removeList();
-	
-		//Hidden 
+
+		//Hidden
 		$htmlHiddenInput = JDom::_("html.form.input.hidden", $this->options);
-		
-		
+
+
 		//Current value is important for the removing features features ()
 		$htmlHiddenCurrent = JDom::_('html.form.input.hidden', array(
 			'dataValue' => $this->dataValue,
 			'dataKey' => $this->getInputName('current'),
 			'formControl' => $this->formControl,
 		));
-		
+
 		$idRemove = $this->getInputId('remove');
 		$nameRemove = $this->getInputName('remove');
-		
+
 		//Store and send the 'remove' value
 		$htmlHiddenRemove = JDom::_('html.form.input.hidden', array(
 			'dataValue' => '',
@@ -94,27 +94,27 @@ class JDomHtmlFormInputFileImagepicker extends JDomHtmlFormInputFile
 			'formControl' => $this->formControl,
 		));
 
-	
+
 		$html = '';
-		
+
 		$html .= $htmlPreview;
-		
+
 		//Hidden inputs in top of the control
 		$html .= $htmlHiddenCurrent .LN;
 		$html .= $htmlHiddenRemove .LN;
 		$html .= $htmlHiddenInput .LN;
-		
-		
-		$html .= '<div class="input-prepend input-append">' .LN;	
+
+
+		$html .= '<div class="input-prepend input-append">' .LN;
 		$html .= '<div class="btn-group">';
-		
+
 		//Prepend
 		$html .= '<span class="add-on">'
 			.	$htmlIconPreview
 			.	'</span>';
-		
+
 		$htmlIconRemove = JDom::_('html.icon', array('icon' => 'delete',));
-		
+
 		$idRemoveBtn = $this->getInputId('deletebtn');
 
 		// Create the upload button
@@ -135,58 +135,58 @@ class JDomHtmlFormInputFileImagepicker extends JDomHtmlFormInputFile
 			),
 			'target' => 'modal',
 			'handler' => 'iframe',
-								
-			'href' => 'index.php?option=com_media&view=images&layout=default&tmpl=component&e_name='. $this->getInputId(),
-								
-		));
-		
-	
 
-//REMOVE ACTIONS		
+			'href' => 'index.php?option=com_media&view=images&layout=default&tmpl=component&e_name='. $this->getInputId(),
+
+		));
+
+
+
+//REMOVE ACTIONS
 		if (!$isNew && count($removeList))
 		{
 			$html .= '<button class="btn dropdown-toggle" id="' . $idRemoveBtn . '" data-toggle="dropdown">';
 			$html .= $htmlIconRemove;
 			$html .= '</button>' .LN;
-		
+
 			$html .= '<ul class="dropdown-menu">' .LN;
-			
+
 			foreach($removeList as $item)
 			{
 				$icon = $item['icon'];
 				$itemIcon = JDom::_('html.icon', array(
 					'icon' => $icon,
 				));
-				
-				$htmlLink = '<div class="pull-right">' 
+
+				$htmlLink = '<div class="pull-right">'
 					.  	$itemIcon
 					. 	'</div>'
 					.	$item['text'];
-				
+
 				$html .= '<li>' .LN;
-				
+
 				$jsRemove = 'jQuery(\'input[id=' . $idRemove . ']\').val(\'' . $item['value'] . '\');';
 				$jsRemove .= 'jQuery(\'button[id=' . $idRemoveBtn . '] i\').attr(\'class\', \'icon-' . $icon . '\');';
-				
-				$html .= '<a onclick="' . $jsRemove . '">' 
+
+				$html .= '<a onclick="' . $jsRemove . '">'
 					. 	$htmlLink
 					. 	'</a>' .LN;
-					
+
 				$html .= '</li>' .LN;
 			}
 			$html .= '</ul>' .LN;
-			
+
 		}
 
 		$html .= $htmlButtonBrowse;
-	
-	
-		//Close the control		
+
+
+		//Close the control
 		$html .= '</div>' .LN;
 		$html .= '</div>' .LN;
-		
-								
-		return $html;
+
+
+		return "<%PREFIX%>" . $html . "<%SUFFIX%>";
 	}
 
 	function buildJS()

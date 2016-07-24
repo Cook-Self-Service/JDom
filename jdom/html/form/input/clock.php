@@ -95,10 +95,10 @@ array(	'\\\\', '\\/','\\#','\\!','\\^','\\$','\\(','\\)','\\[','\\]','\\{','\\}'
 			$formatedTime = "";
 
 
-		$html =	'<input type="time" id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+		$html =	'<%PREFIX%><input type="time" id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
 			.	' value="' . $formatedTime . '"'
 			.	' size="6"'
-			.	'/>' .LN
+			.	'/><%SUFFIX%>' .LN
 			.	'<%VALIDOR_ICON%>'.LN
 			.	'<%MESSAGE%>';
 

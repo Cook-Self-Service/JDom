@@ -23,11 +23,11 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 {
 	var $canEmbed = true;
-	
+
 	protected $ui;
 	protected $multiple;
 	protected $valueKey;
-	
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -56,15 +56,15 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 		$this->arg('ui', 	null, $args);
 		$this->arg('multiple', 	null, $args);
 		$this->arg('valueKey', 	null, $args, $this->dataKey);
-		
+
 		if ($this->multiple)
 			$this->domName .= '[]';
-		
+
 	}
 
 	function build()
 	{
-		
+
 		if ($this->groupBy)
 			$options = $this->buildOptionsGroup();
 		else
@@ -73,23 +73,23 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 
 		if ($this->ui == 'chosen')
 		{
-			JDom::_('framework.jquery.chosen');			
+			JDom::_('framework.jquery.chosen');
 			$this->addClass('chzn-select');
 		}
 
-		$html =	'<select id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+		$html =	'<%PREFIX%><select id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
 			. 	($this->multiple?' multiple':'')
 			.	((int)$this->size > 1?' size="' . (int)$this->size . '"':'') . '>' .LN
 			.	$this->indent($this->buildDefault(), 1)
 			.	$this->indent($options, 1)
-			.	'</select>'.	LN
+			.	'</select><%SUFFIX%>'.	LN
 			.	'<%VALIDOR_ICON%>'.LN
 			.	'<%MESSAGE%>';
 
 		return $html;
 
 	}
-	
+
 	function buildJs()
 	{
 		if ($this->useFramework('chosen') && $this->ui == 'chosen')
@@ -206,8 +206,8 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 
 		if ($item === null)
 			$item = new stdClass();
-		
-		
+
+
 		if (!isset($item->$listKey))
 			$item->$listKey = null;
 
@@ -222,20 +222,20 @@ class JDomHtmlFormInputSelectCombo extends JDomHtmlFormInputSelect
 				foreach($this->dataValue as $row)
 				{
 					$values[] = $row->$valueKey;
-				}				
+				}
 			}
 			else
 				$values = $this->dataValue;
-			
+
 			$selected = in_array((int)($item->$listKey), $values);
 		}
-		
+
 		//Integer compatibility when possible
-		else if (is_integer($this->dataValue))			
+		else if (is_integer($this->dataValue))
 			$selected = ((int)$item->$listKey === $this->dataValue);
 		else
 			$selected = ($item->$listKey === $this->dataValue);
-			
+
 
 		$html =	'<option value="'
 			.	htmlspecialchars($item->$listKey, ENT_COMPAT, 'UTF-8')

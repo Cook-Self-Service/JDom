@@ -69,7 +69,7 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 		//$this->addStyle('float', 'left');
 
 		$html = '';
-		$html .= '<fieldset id="<%DOM_ID%>" class="radio btn-group" '
+		$html .= '<%PREFIX%><fieldset id="<%DOM_ID%>" class="radio btn-group" '
 			.	'style="border:0 none;">';
 
 		$i = 0;
@@ -83,7 +83,7 @@ class JDomHtmlFormInputSelectRadio extends JDomHtmlFormInputSelect
 			$i++;
 		}
 
-		$html .= '</fieldset>';
+		$html .= '</fieldset><%SUFFIX%>';
 
 		return $html;
 	}

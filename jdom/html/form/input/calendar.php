@@ -100,7 +100,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 		));
 
 
-		$html = '';
+		$html = '<%PREFIX%>';
 		$html .= '<div class="btn-group">';
 
 		$html .= '<div class="input-append">' .LN;
@@ -108,7 +108,7 @@ class JDomHtmlFormInputCalendar extends JDomHtmlFormInput
 		$html .= $htmlButton .LN;
 		$html .= '</div>' .LN;
 
-		$html .= '</div>';
+		$html .= '</div><%SUFFIX%>';
 
 		return $html;
 	}

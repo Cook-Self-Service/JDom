@@ -23,8 +23,8 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 class JDomHtmlFormInputAccesslevel extends JDomHtmlFormInput
 {
 	protected $display;
-	
-	
+
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -39,9 +39,9 @@ class JDomHtmlFormInputAccesslevel extends JDomHtmlFormInput
 	function __construct($args)
 	{
 		parent::__construct($args);
-		
+
 		$this->arg('display', null, $args, 'list');
-		
+
 		//Get list from Joomla
 		$this->list = JHtml::_('access.assetgroups');
 	}
@@ -59,7 +59,7 @@ class JDomHtmlFormInputAccesslevel extends JDomHtmlFormInput
 
 			case 'radio':
 				$namespace = 'html.form.input.select.radio';
-				break;		
+				break;
 
 			case 'list':
 			default:
@@ -69,13 +69,13 @@ class JDomHtmlFormInputAccesslevel extends JDomHtmlFormInput
 
 		}
 
-		$html = JDom::_($namespace, array_merge($this->options, array(
+		$html = '<%PREFIX%>' .	JDom::_($namespace, array_merge($this->options, array(
 			'list' => $this->list,
 			'listKey'  => 'value',
 			'size' => $size,
 			'viewType' => 'text'
-		)));
-		
+		))) . '<%SUFFIX%>';
+
 		return $html;
 	}
 

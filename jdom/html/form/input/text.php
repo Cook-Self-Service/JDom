@@ -34,7 +34,7 @@ class JDomHtmlFormInputText extends JDomHtmlFormInput
 	 * 	@domID		: HTML id (DOM)  default=dataKey
 	 *
 	 * 	@size		: Input Size
-	 * 
+	 *
 	 */
 	function __construct($args)
 	{
@@ -42,13 +42,13 @@ class JDomHtmlFormInputText extends JDomHtmlFormInput
 
 		$this->arg('size'		, 6, $args, '32');
 	}
-	
+
 	function build()
 	{
-		$html =	'<input type="' . $this->type . '" id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
+		$html =	'<%PREFIX%><input type="' . $this->type . '" id="<%DOM_ID%>" name="<%INPUT_NAME%>"<%STYLE%><%CLASS%><%SELECTORS%>'
 			.	' value="<%VALUE%>"'
 			.	' size="' . $this->size . '"'
-			.	'/>' .LN
+			.	'/><%SUFFIX%>' .LN
 			.	'<%VALIDOR_ICON%>'.LN
 			.	'<%MESSAGE%>';
 
