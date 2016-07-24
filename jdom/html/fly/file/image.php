@@ -30,7 +30,6 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 	protected $altKey;
 	protected $titleKey;
 
-
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -55,7 +54,9 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 		parent::__construct($args);
 		$this->arg('alt'	, null, $args);
 		$this->arg('title'	, null, $args);
-		$this->arg('frame'	, null, $args, true);
+
+
+		$this->arg('frame'	, null, $args, array());
 		$this->arg('altKey'	, null, $args);
 		$this->arg('titleKey'	, null, $args);
 
@@ -65,139 +66,151 @@ class JDomHtmlFlyFileImage extends JDomHtmlFlyFile
 
 		if (!empty($this->titleKey))
 			$this->title = $this->parseKeys($this->dataObject, $this->titleKey);
-	}
 
+
+		// Legacy center attribute
+		if (is_array($this->attrs) && in_array('center', $this->attrs))
+			$this->frame['center'] = true;
+
+	}
 
 	function build()
 	{
-
-        $pos = $this->imageInfos();
-
         $thumbUrl = $this->getFileUrl(true);
 
-
-		// Cannot show the image, only the file path
+		// In case of 'physical' : Cannot show the image, only the file path
 		if ($this->indirect == 'physical')
 			return $thumbUrl;
-
-        $imgStyle = $this->getStyles();
 
 	   	if (empty($thumbUrl))
 			return;
 
+		if ($this->title)
+			$this->addSelector('title', $this->title);
 
-		$style = '';
-		if ($pos)
-		{
-			$style = ($pos->margin['top']?'margin-top:' . (int)$pos->margin['top'] . 'px;':'')
-            .       ($pos->margin['bottom']?'margin-bottom:' . (int)$pos->margin['bottom'] . 'px;':'')
-            .       ($pos->margin['left']?'margin-left:' . (int)$pos->margin['left'] . 'px;':'')
-            .       ($pos->margin['right']?'margin-right:' . (int)$pos->margin['right'] . 'px;':'');
+		if ($this->alt)
+			$this->addSelector('alt', $this->alt);
 
-		}
 
         $html = '<img src="' . $thumbUrl . '"'
-            .   ($this->title?' title="' . htmlspecialchars($this->title). '"':'')
-            .   ($this->alt?' alt="' . htmlspecialchars($this->alt). '"':'')
-            .   (!empty($style)?' style="' . $style . '"':'')
-            .   ($pos && $pos->width?' width="' . (int)$pos->width . 'px" ':'')
-            .   ($pos && $pos->height?' height="' . (int)$pos->height . 'px" ':'')
+            .   '<%CLASS%><%SELECTORS%>'
             .   '/>';
 
 
-		if ($pos && $this->frame && $pos->wrapWidth && $pos->wrapHeight)
-		{
-			$html = "\n" . '<div class="img-zone" style="width:' . $pos->wrapWidth . 'px;height:' . $pos->wrapHeight . 'px; overflow:hidden;'
-            .   'display:inline-block;' . $imgStyle . '"'
-            .   '>'
-
-            . $html
-
-			. '</div>';
-		}
+		// Embed the image inside a div for center, border, overflow,
+		if (!empty($this->frame))
+			$html = $this->imageFrame($html, $this->frame);
 
 
         return $html;
 	}
 
-	function imageInfos()
+	function imageFrame($html, $frameOptions)
 	{
-		if (!$this->dataValue)
-			return;
+		if ($w = (int)$this->width)
+			$this->styles['width'] = $w;
 
-		$helperClass = $this->getComponentHelper();
-		if (!$helperClass)
-			return;
+		if ($h = (int)$this->height)
+			$this->styles['height'] = $h;
 
-		$path = $this->root . $this->dataValue;
-		$options = array(
-			'width' => $this->width,
-			'height' => $this->height,
-			'attrs' => $this->attrs
-		);
 
-		if (!method_exists($helperClass, 'getImageInfos'))
-			return null;
-
-		if (!$infos = $helperClass::getImageInfos($path, $options))
-			return null;
-
-		$margin = array(
-			'top' => 0,
-			'bottom' => 0,
-			'left' => 0,
-			'right' => 0,
-		);
-
-		$pos = new stdClass();
-
-		$pos->width = (isset($info->w)?$info->w:null);
-		$pos->height = (isset($info->h)?$info->h:null);
-
-		if (!is_array($this->attrs) || (!in_array('fit', $this->attrs)))
+		if ($w && $h)
 		{
-			if (isset($info->imagesize))
+
+			$remainH = $h;
+			$remainW = $w;
+
+
+			if (isset($this->frame['styles']) && is_array($this->frame['styles']))
 			{
-				$pos->width = min($pos->width, $info->imagesize->width);
-				$pos->height = min($pos->height, $info->imagesize->height);
-			}
-		}
+				$frameStyles = $this->frame['styles'];
 
-		if (isset($info->resize) && isset($info->imagesize))
-		{
-			$w = $info->imagesize->width;
-			$h = $info->imagesize->height;
-
-
-			if ($this->attrs && in_array('center', $this->attrs))
-			{
-				if ($info->w != $info->widthCanvas)
+				foreach($frameStyles as $property => $value)
 				{
-					$hzMarg = $info->widthCanvas - $pos->width;
-					$margin['left'] = round($hzMarg/2);
-					$margin['right'] = $hzMarg - $margin['left'];
+					$this->addStyle($property, $value);
+
+					switch($property)
+					{
+						case 'width':
+							$remainW = (int)$value;
+							break;
+
+						case 'height':
+							$remainH = (int)$value;
+							break;
+					}
 				}
-
-
-				if ($info->h != $info->heightCanvas)
-				{
-					$vtMarg = $info->heightCanvas - $pos->height;
-					$margin['top'] = round($vtMarg/2);
-					$margin['bottom'] = $vtMarg - $margin['top'];
-				}
-
 			}
 
+			$m = 0;
+			if (isset($this->frame['margin']))
+				$m = $this->frame['margin'];
+
+
+			$remainW += 2 * $m;
+			$remainH += 2 * $m;
+
+
+			// Centering the photo in the frame
+			if (isset($this->frame['center']) && $this->frame['center']
+				&& $helperClass = $this->getComponentHelper()) // Component helper is required
+			{
+
+				// Get the image properties
+				$filePath = $helperClass::getFile($this->getPath());
+
+				if (file_exists($filePath))
+				{
+					$proprerties = JImage::getImageFileProperties($filePath);
+
+					$ratioWith = $w / $proprerties->width;
+					$ratioHeight = $h / $proprerties->height;
+
+
+					if ($ratioWith < $ratioHeight)
+						// Fit on the width
+						$ratio = $ratioWith;
+					else
+						$ratio = $ratioHeight;
+
+
+
+					// Set padding on the height
+					$margin = (int)(($remainH - ($proprerties->height * $ratio))/2);
+
+
+					$this->addStyle('padding-top', $margin . 'px');
+					$this->addStyle('padding-bottom', $margin . 'px');
+
+					// The size is affected by the padding
+					$remainH = $remainH - ($margin*2);
+
+
+					// Set padding on the width
+					$margin = (int)(($remainW - ($proprerties->width * $ratio))/2);
+
+
+					$this->addStyle('padding-left', $margin . 'px');
+					$this->addStyle('padding-right', $margin . 'px');
+
+
+					// The size is affected by the padding
+					$remainW = $remainW - ($margin*2);
+				}
+
+			}
+
+			$this->addStyle('width', $remainW . 'px');
+			$this->addStyle('height', $remainH . 'px');
 		}
 
+		$html = '<div class="img-zone img-frame"'
+			. 	'<%STYLE%>'
+			.	'>'
+			.	$html
+			.	'</div>';
 
 
-		$pos->wrapWidth = isset($info->widthCanvas)?$info->widthCanvas:null;
-		$pos->wrapHeight = isset($info->heightCanvas)?$info->heightCanvas:null;
-		$pos->margin = $margin;
-		$pos->scale = isset($info->scale)?$info->scale:null;
-
-		return $pos;
+        return $html;
 	}
-
 }

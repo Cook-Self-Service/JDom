@@ -228,13 +228,19 @@
 				}
 				else
 				{
-					// User event callback
+					// Deprecated
 					this.onBeforeSuccess(object, response);
+
+
+					// User event callback
+					var responseData = response.response.data;
+					var responseTransaction = response.transaction;
+
+					this.onSuccess(responseData, responseTransaction, object, response);
 
 					this.successObject(object, response);
 
 				}
-
 
 
 //				this.successObject(object, data, textStatus, jqXHR);
@@ -245,14 +251,22 @@
 				response = this.transaction.createResponse();
 				this.transaction.setHtml(response, data);
 
-				// User event callback
+				// Deprecated
 				this.onBeforeSuccess(object, response);
+
+				// User event callback
+				var responseHtml = response.response.html;
+				var responseTransaction = response.transaction;
+
+				this.onSuccess(responseHtml, responseTransaction, object, response);
+
+
 
 				this.successHTML(object, response);
 			}
 
 
-			// User event callback
+			// DEPRECATED
 			this.onAfterSuccess(object, response);
 
 
@@ -290,6 +304,20 @@
 		{
 			this.transaction.outputExceptions(this, response);
 		},
+
+
+		// User Callback
+		onSuccess: function(response){
+
+		},
+
+		// User Callback
+		onFailure: function(response){
+
+		},
+
+
+
 
 
 		hookResponse: function(data)
@@ -335,11 +363,11 @@
 			{
 				response = data;
 
-				// Hook formated answer (with a lot of features)
+				// Hook formated answer
 				switch (data.header)
 				{
 					case 'hook-1.0':
-						// Upgrade to Hook 1.1 format
+						// LEGACY : Upgrade to Hook 1.1 format
 						// Build the sorted messages list
 						if ((typeof(response.transaction) != 'undefined') && (typeof(response.transaction.exceptions) != 'undefined'))
 						{
@@ -370,7 +398,7 @@
 					//Latest
 					case 'hook-1.1':
 					default:
-
+						// Already formated by the PHP Response Class
 
 						break;
 				}

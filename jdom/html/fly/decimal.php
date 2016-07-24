@@ -42,27 +42,74 @@ class JDomHtmlFlyDecimal extends JDomHtmlFly
 	{
 		parent::__construct($args);
 		$this->arg('decimals' , null, $args, 0);
-		$this->arg('decimalPoint' , null, $args, (defined('DECIMAL_POINT')?DECIMAL_POINT:'.'));
-		$this->arg('thousandsSeparator' , null, $args, "'");
+		$this->arg('decimalPoint' , null, $args);
+		$this->arg('thousandsSeparator' , null, $args, null);
 		$this->arg('roundingMethod' , null, $args, "round");
 		$this->arg('emptyZero' , null, $args, false);
 
+		$this->decimals = (int)$this->decimals;
 	}
 
-	function build()
+	protected function getThousandsSeparator()
 	{
-		// Hide the value when equals to zero
-		if (($this->emptyZero) && (($this->dataValue == '0') || ($this->dataValue === 0)))
-			return '';
+		$thousandsSeparator = null;
 
-		$value = $this->dataValue;
+		if ($this->thousandsSeparator === null)
+			$thousandsSeparator = '';
+		else if ($this->thousandsSeparator === false)
+			$thousandsSeparator = '';
+		else if ($this->thousandsSeparator === true)
+		{
+			$locale_info = localeconv();
 
-		$dp = $this->decimalPoint;
-		$nbDecimals = (int)$this->decimals;
+			if (!empty($locale_info['thousands_sep']))
+				$thousandsSeparator = $locale_info['thousands_sep'];
+			else
+				$thousandsSeparator = " ";
+		}
+		else
+		{
+			$thousandsSeparator = substr($this->thousandsSeparator, 0, 1);
+		}
+
+		return $thousandsSeparator;
+	}
+
+	protected function getDecimalPoint()
+	{
+		$decimalPoint = $this->decimalPoint;
+
+		if (empty($decimalPoint))
+		{
+			$locale_info = localeconv();
+
+			if (defined('DECIMAL_POINT'))
+				$decimalPoint = DECIMAL_POINT;
+
+			else if (!empty($locale_info['decimal_point']))
+				$decimalPoint = $locale_info['decimal_point'];
+			else
+				$decimalPoint = '.';
+		}
+
+
+		return $decimalPoint;
+	}
+
+
+	protected function roundDecimal($value, $nbDecimals = null, $roundingMethod = null)
+	{
+		if (!$nbDecimals)
+			$nbDecimals = $this->decimals;
+
+		if (!$roundingMethod)
+			$roundingMethod = $this->roundingMethod;
+
+
 		$multiple = pow(10, $nbDecimals);
 
 		// round the value to the decimals
-		switch($this->roundingMethod)
+		switch($roundingMethod)
 		{
 			// Round decimals to the lower value
 			case 'floor':
@@ -81,50 +128,31 @@ class JDomHtmlFlyDecimal extends JDomHtmlFly
 				break;
 		}
 
+		return $value;
+	}
 
-		// Integer number
-		if ((int)$value == $value)
-		{
-			$integerPart = $value;
-			$decimalsPart = "";
+	function checkEmpty()
+	{
+		if (($this->emptyZero) && (($this->dataValue == '0') || ($this->dataValue === 0)))
+			return true;
 
-		}
-		else
-		{
-			$integerPart = substr($value, 0, strpos((string)$value, '.'));
-			$decimalsPart = substr($value, strpos((string)$value, '.') + 1);
-		}
+		return false;
+	}
 
 
-		// Split thousands
-		if ($this->thousandsSeparator)
-		{
-			$newIntergerPart = "";
-			$count = 0;
-			for($i = strlen($integerPart) ; $i-- ; $i > 0)
-			{
-				$number = substr($integerPart, $i, 1);
+	function build()
+	{
+		// Hide the value when equals to zero
+		if ($this->checkEmpty())
+			return '';
 
-				if ($count == 3)
-				{
-					$newIntergerPart = $this->thousandsSeparator . $newIntergerPart;
-					$count = 0;
-				}
+		$value = $this->dataValue;
+		$value = $this->roundDecimal($value);
 
-				$newIntergerPart = $number . $newIntergerPart;
+		$thousandsSeparator = $this->getThousandsSeparator();
+		$decimalPoint = $this->getDecimalPoint();
 
-				$count++;
-			}
-
-
-			$integerPart = $newIntergerPart;
-		}
-
-		// Pad with ending zeros
-		$decimalsPart = str_pad($decimalsPart, $this->decimals, '0', STR_PAD_RIGHT);
-
-		// Recompose the string
-		$html = $integerPart . ($nbDecimals>0?$dp . $decimalsPart:'');
+		$html = number_format($value, $this->decimals, $decimalPoint, $thousandsSeparator);
 
 		return $html;
 	}

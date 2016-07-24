@@ -29,7 +29,9 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 	protected $width;
 	protected $height;
 	protected $root;
-	protected $attrs;
+	protected $attrs;  // Deprecated : Still used as Legacy
+	protected $attributes;
+	protected $filters;
 
 	protected $view;
 	protected $cid;
@@ -72,6 +74,9 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 		$this->arg('width'		, null, $args, 0);
 		$this->arg('height'		, null, $args, 0);
 		$this->arg('attrs'		, null, $args);
+		$this->arg('attributes'		, null, $args);
+		$this->arg('filters'		, null, $args);
+
 
 		$this->arg('listKey'	, null, $args, 'id');
 		$this->arg('view'		, null, $args);
@@ -86,6 +91,17 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 
 	}
 
+	function getPath()
+	{
+		$path = $this->dataValue;
+
+		// Add the root alias directory ONLY when missing in the path
+		if (!preg_match("/^\[[A-Z_0-9]+\]/", $path))
+			$path = ($this->root?$this->root . '/':'') . $path;
+
+		return $path;
+	}
+
 	function getFileUrl($thumb = false, $link = false)
 	{
 		$helperClass = $this->getComponentHelper();
@@ -95,28 +111,54 @@ class JDomHtmlFlyFile extends JDomHtmlFly
 		if (($this->indirect != 'index') && empty($this->dataValue))
 			return;
 
-		$path = $this->dataValue;
-
-		// Add the root alias directory ONLY when missing in the path
-		if (!preg_match("/^\[[A-Z_0-9]+\]/", $path))
-			$path = ($this->root?$this->root . '/':'') . $path;
+		$path = $this->getPath();
 
 		// $link = false when creating the image thumb. 'download' not allowed in this case.
 		// Then, pass a second time to eventually create the download URL
-		$options = array();
-		if ($thumb)
-			$options = array(
-				'width' => $this->width,
-				'height' => $this->height,
-				'attrs' => $this->attrs,
-			);
-		else if ($link)
-		{
-			$options = array(
-				'download' => ($this->target == 'download')
 
-			);
+		$options = array();
+		// New format of attributes
+		if ($this->attributes || $this->filters)
+		{
+
+			if ($thumb)
+				$options = array(
+					'size' => array(
+						'width' => (int)$this->width,
+						'height' => (int)$this->height
+					),
+					'attrs' => $this->attributes,
+					'filters' => $this->filters,
+				);
+			else if ($link)
+			{
+				$options = array(
+					'target' => $this->target
+				);
+			}
+
+			// Convert to object
+			$options = JArrayHelper::toObject($options);
 		}
+		else
+		{
+
+			if ($thumb)
+				$options = array(
+					'width' => (int)$this->width,
+					'height' => (int)$this->height,
+					'attrs' => $this->attrs,
+				);
+			else if ($link)
+			{
+				$options = array(
+					'download' => ($this->target == 'download')
+
+				);
+			}
+		}
+
+		// From here $options can be an array (Legacy version), or an object (new version)
 
 		switch ($this->indirect)
 		{

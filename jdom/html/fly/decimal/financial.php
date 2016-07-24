@@ -22,26 +22,75 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 class JDomHtmlFlyDecimalFinancial extends JDomHtmlFlyDecimal
 {
+	protected $currencyFormat;
+	protected $localTag;
 	protected $format;
+
+
 
 	/*
 	 * Constuctor
 	 *
-	 *	@format				: Currency format  -   uses %s to place the value	 *
+	 *	@currencyFormat		: Currency format  - JDom formating uses %s to place the value: ie: '$ ‰s'
+	 *
+	 *  The following parameters are used when currencyFormat is not defined
+	 * 	@localTag		    : local tag for the currency (ie : en_GB.UTF-8)
+	 *  @format				: PHP money_format() format  - For advanced used.
 	 */
 	function __construct($args)
 	{
 		parent::__construct($args);
-		$this->arg('decimals' , null, $args, 2);
-		$this->arg('format' , null, $args, "%s" . (defined('CURRENCY_SYMBOL')?" " . CURRENCY_SYMBOL:''));
+
+
+		// Run before the parent class
+		$this->arg('currencyFormat' , null, $args);
+
+		if ($this->currencyFormat && ($this->thousandsSeparator === null))
+			$this->thousandsSeparator = true;
+
+
+		if (empty($this->decimals))
+			$this->decimals = 2;
+
+
+		if ($this->currencyFormat)
+		{
+			// Format manually
+
+		}
+		else
+		{
+			// Format using PHP money_format() function
+			$this->arg('localTag' , null, $args, str_replace('-', '_', JFactory::getLanguage()->getTag()) . '.UTF-8');
+			$this->arg('format' , null, $args, "%.2n");
+		}
+
 	}
+
 
 	function build()
 	{
-		$html = parent::build();
-		$html = sprintf($this->format, $html);
+		// Hide the value when equals to zero
+		if ($this->checkEmpty())
+			return '';
+
+
+		if ($this->currencyFormat)
+		{
+			$html = parent::build();
+			$html = sprintf($this->currencyFormat, $html);
+		}
+		else
+		{
+			// Register the locale monetary symbol
+			setlocale(LC_MONETARY, $this->localTag);
+
+			// Format the financial string
+			$html = money_format($this->format, $this->dataValue);
+		}
 
 		return $html;
 	}
+
 
 }
