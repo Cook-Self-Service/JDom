@@ -33,7 +33,7 @@ class JDomHtmlToolbar extends JDomHtml
 
 	var $bar;
 	var $items;
-	
+
 	protected $ui;
 	protected $display;
 	protected $list;
@@ -48,7 +48,7 @@ class JDomHtmlToolbar extends JDomHtml
 	 *  @ui			: Rendering type (default : bootstrap)
 	 *  @display	: Display of the button (all/icon/text)
 	 *  @list		: List of items (grid)
-	 * 
+	 *
 	 */
 	function __construct($args)
 	{
@@ -58,8 +58,8 @@ class JDomHtmlToolbar extends JDomHtml
 		$this->arg('align'	, null, $args, 'left');
 		$this->arg('ui'	, null, $args, 'bootstrap');
 		$this->arg('display', null, $args, 'all');
-		$this->arg('list', null, $args);			
-			
+		$this->arg('list', null, $args);
+
 		//Convert to lowercase because class name has changed since J!3.0
 		if (is_object($this->bar) && strtolower(get_class($this->bar)) == 'jtoolbar')
 			$items = $this->bar->getItems();
@@ -107,7 +107,6 @@ class JDomHtmlToolbar extends JDomHtml
 			$itemNameSpace = 'html.link.button.toolbar.' . strtolower($item[0]);
 			$htmlItems .= JDom::_($itemNameSpace, array(
 				'item' => $item,
-				'checkList' => ($this->list != null),
 				'ui' => $this->ui,
 				'display' => $this->display
 			)) .LN;
@@ -129,5 +128,5 @@ class JDomHtmlToolbar extends JDomHtml
 			'STYLE' 		=> ($this->align == 'center'?' style="text-align:center;"':''),
 			'CLASS'		=> $this->buildDomClass(),
 		), $vars));
-	}	
+	}
 }

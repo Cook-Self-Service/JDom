@@ -35,12 +35,11 @@ class JDomHtmlLinkButtonToolbarLink extends JDomHtmlLinkButtonToolbar
 		parent::__construct($args);
 
 		//Dispatch arguments
-		$this->name = $this->item[1];
-		$this->text = $this->item[2];
-		$this->task = null;
-		$this->list = false;
-		
-		$this->href = $this->item[3];
+		$this->name 		= $this->item[1];
+		$this->text 		= $this->item[2];
+		$this->task 		= null;
+		$this->checkList 	= false;
+		$this->href 		= $this->item[3];
 
 		//Class
 		if (isset($this->item[5]))

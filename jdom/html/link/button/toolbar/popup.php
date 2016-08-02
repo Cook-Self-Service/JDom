@@ -35,14 +35,15 @@ class JDomHtmlLinkButtonToolbarPopup extends JDomHtmlLinkButtonToolbar
 		parent::__construct($args);
 
 		//Dispatch arguments
-		$this->name 	= $this->item[1];
-		$this->text 	= $this->item[2];
+		$this->name 		= $this->item[1];
+		$this->text 		= $this->item[2];
+		$this->checkList 	= false;
 
 		//Class
 		if (isset($this->item[4]))
 			$this->addClass($this->item[4]);
 
-		//Define the modal link				
+		//Define the modal link
 		$this->href = $this->item[3];
 		$this->target = 'modal';
 	}

@@ -22,7 +22,7 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 class JDomHtml extends JDom
 {
 	var $fallback = 'view';
-	
+
 	var $canEmbed = true;		//For links and Ajax
 
 	var $classes = array();
@@ -34,10 +34,11 @@ class JDomHtml extends JDom
 	protected $domClass;
 	protected $domId;
 	protected $route;
-	
+
 	protected $href;
 	protected $task;
 	protected $num;
+	protected $checkList;
 	protected $link_title;
 	protected $tooltip;
 	protected $title;
@@ -51,7 +52,7 @@ class JDomHtml extends JDom
 	protected $modalHeight;
 	protected $modalOnclose;
 	protected $modalScrolling;
-	
+
 	protected $iconLibrary;
 
 
@@ -63,7 +64,7 @@ class JDomHtml extends JDom
 	 *
 	 * 	@namespace 	: requested class
 	 *  @options	: Configuration
-	 * 
+	 *
 	 *  @domClass	: CSS Class
 	 *  @domId		: Markup ID
 	 * 	@selectors	: Markup selectors
@@ -93,12 +94,12 @@ class JDomHtml extends JDom
 
 		$this->arg('popover',		 	null, $args);
 		$this->arg('popoverOptions', 	null, $args);
-		
+
 		$this->arg('modalWidth'		, null, $args);
 		$this->arg('modalHeight'	, null, $args);
 		$this->arg('modalOnclose', 	null, $args);
 		$this->arg('modalScrolling', 	null, $args);
-		
+
 		$this->arg('modal_width', 	null, $args);
 		if (!empty($this->modal_width))
 			$this->modalWidth = $this->modal_width;
@@ -106,12 +107,12 @@ class JDomHtml extends JDom
 		$this->arg('modal_height', 	null, $args);
 		if (!empty($this->modal_height))
 			$this->modalHeight = $this->modal_height;
-		
-		
+
+
 		$this->arg('iconLibrary', 	null, $args, 'icomoon');
-		
-		
-		
+
+
+
 		if ($this->submitEventName)
 			$this->addSelector($this->submitEventName, $this->getSubmitAction());
 
@@ -123,7 +124,7 @@ class JDomHtml extends JDom
 		//Create the tooltip title
 		if ($this->tooltip)
 		{
-			$title = $this->title . ($this->description?'::'.$this->description:'');						
+			$title = $this->title . ($this->description?'::'.$this->description:'');
 			$this->addClass('hasTooltip');
 		}
 
@@ -134,9 +135,9 @@ class JDomHtml extends JDom
 	protected function parseVars($vars)
 	{
 		$responsive = $this->getResponsiveClass();
-		
+
 		return parent::parseVars(array_merge(array(
-			'RESPONSIVE'	=> ($responsive?' ' . $responsive:'')	
+			'RESPONSIVE'	=> ($responsive?' ' . $responsive:'')
 		), $vars));
 	}
 
@@ -158,7 +159,7 @@ class JDomHtml extends JDom
 	public function addSelector($key, $value)
 	{
 		$value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
-		
+
 		if (!isset($this->selectors))
 			$this->selectors = array();
 
@@ -186,7 +187,7 @@ class JDomHtml extends JDom
 	protected function getDomClass()
 	{
 		$domClass = $this->domClass;
-		
+
 		if (!is_array($domClass))
 		{
 			//Trim spaces
@@ -196,7 +197,7 @@ class JDomHtml extends JDom
 
 		if (is_array($domClass))
 			$this->classes = array_merge($this->classes, $domClass);
-		
+
 
 		return implode(' ', $this->classes);
 	}
@@ -237,22 +238,22 @@ class JDomHtml extends JDom
 	{
 		return '';
 	}
-	
+
 	protected function getSubmitAction()
 	{
 		$jinput = $this->app->input;
-		
+
 		$cmd = "Joomla.";
-		
+
 		//Check if opened in modal
 		if ($jinput->get('tmpl') == 'component')
 			$cmd .= "submitformAjax()";
 		else
 			$cmd .= "submitform()";
-		
+
 		$cmd = "return " . $cmd;
-		
-		return $cmd;	
+
+		return $cmd;
 	}
 
 	protected function jsCommand()
@@ -260,62 +261,62 @@ class JDomHtml extends JDom
 		//When a static link is set : No JS execution
 		if (!empty($this->route))
 			return;
-		
+
 		$cmd = '';
 		$version = new JVersion;
-		
+
 		if ($this->jVersion('2.5'))
-			$jinput = JFactory::getApplication()->input;		
-		else		
+			$jinput = JFactory::getApplication()->input;
+		else
 			$jinput = new JInput;
-		
+
 		$task = $this->getTaskExec();
-		
-		$checkList = false;
+
+		$checkList = $this->checkList;
 		//Grid task
 		if (is_numeric($this->num))
 		{
 			$cmd = "listItemTask('cb" . (int)$this->num . "', '" . $this->getTaskExec(true) . "')";
-		
+
 			//Embed in a test to check if an item is checked
 			if (isset($this->list) && $this->list)
 				$checkList = true;
 		}
-		
+
 		//Toolbar task button
 		else if (!empty($task))
 		{
 			$taskCtrl = $this->getTaskExec(true);
-			
+
 			$cmd = "Joomla.";
-			
+
 			//Check if opened in modal
 			if ($jinput->get('tmpl') == 'component')
 				$cmd .= "submitformAjax";
 			else
 				$cmd .= "submitform";
-			
-				
+
+
 			$cmd = "return " . $cmd . "('" . $taskCtrl . "');";
-			
-			
+
+
 			//Because there is no other place for it...
 			switch($task)
 			{
 				case 'delete':
 					$this->alertConfirm = JText::_('PLG_JDOM_ALERT_ASK_BEFORE_REMOVE');
 					break;
-	
+
 				case 'trash':
 					$this->alertConfirm = JText::_('PLG_JDOM_ALERT_ASK_BEFORE_TRASH');
 					break;
 			}
-			
+
 		}
-		
+
 		if (empty($cmd))
 			return;
-		
+
 		//Embed in a confirmation alert box
 		if (isset($this->alertConfirm) && $this->alertConfirm)
 		{
@@ -323,19 +324,19 @@ class JDomHtml extends JDom
 					. 		$cmd
 					. 	"}";
 		}
-		
+
 		//Embed in a test to check if an item is checked
 		if ($checkList)
 		{
 			$msgList = JText::sprintf('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST', $task);
-			
+
 			$cmd = 	"if (document.adminForm.boxchecked.value==0){"
 				.		"alert('" . addslashes($msgList)  ."');"
 				.	"}else{"
 				. 		$cmd
 				. 	"}";
 		}
-		
+
 		$this->link_js = $cmd;
 	}
 
@@ -343,14 +344,14 @@ class JDomHtml extends JDom
 	{
 		if (!isset($this->route))
 			return;
-		
+
 		$target = null;
 		if (isset($this->target))
 			$target = $this->target;
-		
+
 		$this->href = $this->getRoute($this->route, $target);
 	}
-	
+
 	protected function embedLink($html)
 	{
 		if (!$this->allowWrapLink)
@@ -359,14 +360,14 @@ class JDomHtml extends JDom
 /* TO FINISH
 		if ($this->popover)
 		{
-			
+
 			$html = JDom::_("html.link.popover", array(
-			
+
 				'content' => $html,
 				'popover' => $this->popover,
 				'popoverOptions' => $this->popoverOptions,
 			));
-			
+
 			//Ends here
 			return $html;
 		}
@@ -378,45 +379,45 @@ class JDomHtml extends JDom
 		//Automaticaly create the title
 		if (isset($this->titleKey) && isset($this->dataObject) && $this->dataObject)
 			$this->link_title = $this->parseKeys($this->dataObject, $this->titleKey);
-		
+
 
 		if ((isset($this->href) || isset($this->target) ||  isset($this->task)) && (isset($this->dataValue)) && (!empty($this->dataValue)))
 		{
-			
+
 			$followersVars = array(
-				'href' => null, 
-				'task' => null, 
-				'num' => null, 
-				'link_title' => null, 
+				'href' => null,
+				'task' => null,
+				'num' => null,
+				'link_title' => null,
 				'target' => null,
 				'handler' => null,
 				'modalWidth' => null,
 				'modalHeight' => null,
 				'modal_width' => null,
-				'modal_height' => null, 
-				'tooltip' => null, 
-				'enabled' => null, 
-				
+				'modal_height' => null,
+				'tooltip' => null,
+				'enabled' => null,
+
 			);
-		
+
 			$options = array(
 				'content' => $html,
-				
+
 				//Change var name
 				'selectors' => (isset($this->linkSelectors)?$this->linkSelectors:null),
-				
+
 			);
-			
-			
+
+
 			//Populate the options
 			foreach ($followersVars as $var => $default)
 			{
 				if (isset($this->$var))
 					$options[$var] = $this->$var;
-				
+
 				else if (isset($this->options[$var]))
 					$options[$var] = $this->options[$var];
-				
+
 				//Fallback
 				else
 					$options[$var] = $default;
@@ -436,17 +437,17 @@ class JDomHtml extends JDom
 		if (!$responsive)
 			$responsive = $this->responsive;
 
-		// Only use bootstrap		
+		// Only use bootstrap
 		if (in_array($responsive, array(
 			'visible-desktop', 'hidden-desktop',
 			'visible-tablet', 'hidden-tablet',
 			'visible-phone', 'hidden-phone',
 		)))
 			return $responsive;
-	
-		return '';	
+
+		return '';
 	}
-	
+
 	protected function isBootstrapColor($color)
 	{
 		return in_array($color, array(

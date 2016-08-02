@@ -282,6 +282,9 @@
 			{
 				if (typeof(thisp.ready) != 'undefined')
 					thisp.ready(object, response);
+
+				// User trigger
+				thisp.onReady(object, response);
 			});
 		},
 
@@ -316,7 +319,11 @@
 
 		},
 
+		// User callback after Dom ready
+		onReady: function(object, response)
+		{
 
+		},
 
 
 
@@ -518,7 +525,6 @@
 				callback['_' + this.token] = null;
 			}
 		},
-
 
 
 
