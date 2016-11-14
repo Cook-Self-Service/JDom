@@ -92,8 +92,8 @@ class JDom extends JObject
 
 		$this->args = $args;
 
-		CkJLoader::registerPrefix('JDom', dirname(__FILE__));
-		CkJLoader::discover('JDom', dirname(__FILE__));
+		JLoader::registerPrefix('JDom', dirname(__FILE__));
+		JLoader::discover('JDom', dirname(__FILE__));
 
 		$this->app = JFactory::getApplication();
 
@@ -164,7 +164,7 @@ class JDom extends JObject
 		if (!$file)
 			return false;
 
-		CkJLoader::register($className, $file);
+		JLoader::register($className, $file);
 
 		return true;
 	}
