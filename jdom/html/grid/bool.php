@@ -44,7 +44,10 @@ class JDomHtmlGridBool extends JDomHtmlGrid
 	function build()
 	{
 		//PROXY
-		return JDom::_('html.grid.task.state.bool', $this->options);
+		if (isset($this->options['togglable']) && $this->options['togglable'])
+			return JDom::_('html.grid.task.state.bool', $this->options);
+
+		return JDom::_('html.fly.bool', $this->options);
 	}
 
 }

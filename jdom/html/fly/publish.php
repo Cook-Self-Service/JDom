@@ -26,7 +26,7 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 	protected $text;
 	protected $viewType;
 	protected $color;
-	
+
 	/*
 	 * Constuctor
 	 * 	@namespace 	: requested class
@@ -52,18 +52,20 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 
 		if ($this->dataValue === null)
 			$this->dataValue = '';
-		
+
 		$state = $states[$this->dataValue];
 		$this->icon = $state[0];
 		$this->text = $this->JText($state[1]);
 		if (empty($this->viewType))
 			$this->viewType = $state[2];
-		
+
 		$this->color = $state[3];
 	}
-	
+
 	function build()
 	{
+		$html = '';
+
 		//Icon alone
 		if ($this->viewType == 'icon')
 		{
@@ -72,18 +74,18 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 				'tooltip' => true,
 				'title' => $this->text
 			));
-			
+
 			return $html;
 		}
-		
-		
+
+
 		//Icon
 		if ($this->viewType == 'both')
 		{
 			$html .= JDom::_('html.icon', array(
 				'icon' => $this->icon,
 			));
-						
+
 		}
 
 		$html .= $this->text;
@@ -91,7 +93,7 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 		//Embed in label
 		$html = JDom::_('html.label', array(
 			'content' => $html,
-			'color' => $this->color		
+			'color' => $this->color
 		));
 
 		return $html;
@@ -100,7 +102,7 @@ class JDomHtmlFlyPublish extends JDomHtmlFly
 	protected function parseVars($vars)
 	{
 		return parent::parseVars(array_merge(array(
-			'IMAGE_SOURCE' 	=> $this->image,
+			'IMAGE_SOURCE' 	=> (isset($this->image)?$this->image:''),
 			'ALT' 			=> htmlspecialchars($this->text, ENT_COMPAT, 'UTF-8'),
 		), $vars));
 	}
