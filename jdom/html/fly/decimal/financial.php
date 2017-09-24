@@ -31,7 +31,7 @@ class JDomHtmlFlyDecimalFinancial extends JDomHtmlFlyDecimal
 	/*
 	 * Constuctor
 	 *
-	 *	@currencyFormat		: Currency format  - JDom formating uses %s to place the value: ie: '$ ‰s'
+	 *	@currencyFormat		: Currency format  - JDom formating uses %s to place the value: ie: '$ %s'
 	 *
 	 *  The following parameters are used when currencyFormat is not defined
 	 * 	@localTag		    : local tag for the currency (ie : en_GB.UTF-8)

@@ -60,8 +60,7 @@ class JDomHtmlToolbar extends JDomHtml
 		$this->arg('display', null, $args, 'all');
 		$this->arg('list', null, $args);
 
-		//Convert to lowercase because class name has changed since J!3.0
-		if (is_object($this->bar) && strtolower(get_class($this->bar)) == 'jtoolbar')
+		if (is_object($this->bar) && (strtolower(get_class($this->bar)) == 'jtoolbar' || strtolower(get_class($this->bar)) == 'joomla\cms\toolbar\toolbar'))
 			$items = $this->bar->getItems();
 		else
 			$items = $this->bar;
